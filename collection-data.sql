@@ -1,10 +1,10 @@
 -- ============================================================
 -- XOGÚN — Datos de colección de Antonio (BGG export)
--- 312 xogos propios + 110 en lista de desexos
--- EXECUTAR DESPOIS de crear o schema e o usuario admin
+-- 310 xogos propios + 110 en lista de desexos
+-- EXECUTAR DESPOIS de supabase-schema.sql e de crear o usuario admin
 -- ============================================================
 
--- Paso 1: Inserir todos os xogos no catálogo global (aprobados)
+-- Paso 1: Inserir todos os xogos no catálogo global
 INSERT INTO games (bgg_id, name, min_players, max_players, min_duration, max_duration, year_published, complexity, bgg_rating, approved)
 VALUES
   (230498, 'Deckscape: The Fate of London', 1, 6, 60, 60, 2018, 1.97, 5.99, true),
@@ -91,8 +91,6 @@ VALUES
   (92828, 'Dixit: Odyssey', 3, 12, 30, 30, 2011, 1.16, 7.26, true),
   (243698, 'Djinn', 2, 4, 40, 40, 2018, 1.5, 5.9, true),
   (63268, 'Spot it!', 2, 8, 15, 15, 2012, 1.04, 6.44, true),
-  (63268, 'Spot it!', 2, 8, 15, 15, 2019, 1.04, 6.44, true),
-  (63268, 'Spot it!', 2, 8, 15, 15, 2009, 1.04, 6.44, true),
   (172540, 'Dragoon', 2, 4, 30, 60, 2016, 1.92, 6.38, true),
   (221544, 'Dragoon: The Rogue and Barbarian Expansion', 2, 6, 30, 90, 2018, 2.0, 6.52, true),
   (329714, 'Dreadful Circus', 4, 8, 45, 45, 2021, 2.24, 6.11, true),
@@ -442,1703 +440,1275 @@ ON CONFLICT (bgg_id) DO UPDATE SET
 -- ============================================================
 -- Paso 2: Engadir á colección de Antonio
 -- SUBSTITÚE 'TU_USER_ID' polo UUID do teu usuario en Supabase
--- (Authentication → Users → copia o UUID)
+-- Authentication → Users → copia o UUID
 -- ============================================================
 
 DO $$
-DECLARE user_id UUID := 'TU_USER_ID';  -- << SUBSTITÚE ISTO
+DECLARE uid UUID := '8e293a4f-0a9b-4e1b-9cd8-d82fe71d35ac';
 BEGIN
 
--- Xogos propios (owned)
+-- Xogos propios
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 230498
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 230498
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 298619
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 298619
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 5, 0
-  FROM games WHERE bgg_id = 174988
+  SELECT uid, id, 'owned', 5, 0 FROM games WHERE bgg_id = 174988
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 400205
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 400205
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 227018
+  SELECT uid, id, 'owned', 7, 0 FROM games WHERE bgg_id = 227018
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 316377
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 316377
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 154560
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 154560
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 314088
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 314088
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 359402
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 359402
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 256442
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 256442
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 344958
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 344958
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 254639
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 254639
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 360879
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 360879
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 298705
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 298705
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 295948
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 295948
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 359871
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 359871
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 419279
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 419279
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 257766
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 257766
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 341935
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 341935
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 395375
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 395375
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 369270
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 369270
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 383459
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 383459
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 230802
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 230802
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 299571
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 299571
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 6, 0
-  FROM games WHERE bgg_id = 191925
+  SELECT uid, id, 'owned', 6, 0 FROM games WHERE bgg_id = 191925
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 30933
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 30933
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 362874
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 362874
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 439547
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 439547
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 447766
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 447766
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 6, 0
-  FROM games WHERE bgg_id = 211534
+  SELECT uid, id, 'owned', 6, 0 FROM games WHERE bgg_id = 211534
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 232252
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 232252
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 211926
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 211926
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 225526
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 225526
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 378890
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 378890
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 240980
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 240980
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 288424
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 288424
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 413246
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 413246
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 322677
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 322677
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 202831
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 202831
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 131835
+  SELECT uid, id, 'owned', 7, 0 FROM games WHERE bgg_id = 131835
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 133772
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 133772
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 248376
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 248376
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 284936
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 284936
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 214396
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 214396
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 230914
+  SELECT uid, id, 'owned', 7, 0 FROM games WHERE bgg_id = 230914
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 302840
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 302840
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 50381
+  SELECT uid, id, 'owned', 7, 0 FROM games WHERE bgg_id = 50381
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 290367
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 290367
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 345972
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 345972
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 8, 0
-  FROM games WHERE bgg_id = 191710
+  SELECT uid, id, 'owned', 8, 0 FROM games WHERE bgg_id = 191710
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 8, 0
-  FROM games WHERE bgg_id = 16727
+  SELECT uid, id, 'owned', 8, 0 FROM games WHERE bgg_id = 16727
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 312490
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 312490
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 269257
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 269257
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 97093
+  SELECT uid, id, 'owned', 7, 0 FROM games WHERE bgg_id = 97093
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 280203
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 280203
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 205398
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 205398
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 233961
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 233961
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 249763
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 249763
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 8, 0
-  FROM games WHERE bgg_id = 1294
+  SELECT uid, id, 'owned', 8, 0 FROM games WHERE bgg_id = 1294
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 224037
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 224037
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 314503
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 314503
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 158899
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 158899
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 402024
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 402024
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 243697
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 243697
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 306656
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 306656
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 359348
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 359348
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 319579
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 319579
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 284083
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 284083
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 300753
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 300753
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 246784
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 246784
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 298069
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 298069
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 437581
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 437581
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 329002
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 329002
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 326908
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 326908
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 265381
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 265381
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 378293
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 378293
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 169654
+  SELECT uid, id, 'owned', 7, 0 FROM games WHERE bgg_id = 169654
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 402206
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 402206
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 9, 0
-  FROM games WHERE bgg_id = 39856
+  SELECT uid, id, 'owned', 9, 0 FROM games WHERE bgg_id = 39856
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 8, 0
-  FROM games WHERE bgg_id = 145325
+  SELECT uid, id, 'owned', 8, 0 FROM games WHERE bgg_id = 145325
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 8, 0
-  FROM games WHERE bgg_id = 156189
+  SELECT uid, id, 'owned', 8, 0 FROM games WHERE bgg_id = 156189
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 9, 0
-  FROM games WHERE bgg_id = 92828
+  SELECT uid, id, 'owned', 9, 0 FROM games WHERE bgg_id = 92828
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 243698
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 243698
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 63268
+  SELECT uid, id, 'owned', 7, 0 FROM games WHERE bgg_id = 63268
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 63268
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 172540
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 63268
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 221544
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 172540
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 329714
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 221544
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 357028
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 329714
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 307963
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 357028
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 342900
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 307963
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 299946
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 342900
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 204817
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 299946
+  SELECT uid, id, 'owned', 8, 0 FROM games WHERE bgg_id = 172225
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 204817
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 312667
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 8, 0
-  FROM games WHERE bgg_id = 172225
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 204053
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 312667
+  SELECT uid, id, 'owned', 8, 0 FROM games WHERE bgg_id = 172242
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 204053
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 346205
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 8, 0
-  FROM games WHERE bgg_id = 172242
+  SELECT uid, id, 'owned', 7, 0 FROM games WHERE bgg_id = 300993
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 346205
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 256381
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 300993
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 294233
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 256381
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 334829
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 294233
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 271601
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 334829
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 269072
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 271601
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 281194
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 269072
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 352418
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 281194
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 309110
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 352418
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 65244
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 309110
+  SELECT uid, id, 'owned', 6, 0 FROM games WHERE bgg_id = 235251
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 65244
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 296912
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 6, 0
-  FROM games WHERE bgg_id = 235251
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 313093
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 296912
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 339214
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 313093
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 318084
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 339214
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 321539
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 318084
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 167892
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 321539
+  SELECT uid, id, 'owned', 5, 0 FROM games WHERE bgg_id = 30539
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 167892
+  SELECT uid, id, 'owned', 7, 0 FROM games WHERE bgg_id = 83195
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 5, 0
-  FROM games WHERE bgg_id = 30539
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 12692
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 83195
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 275044
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 12692
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 303734
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 275044
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 270293
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 303734
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 235252
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 270293
+  SELECT uid, id, 'owned', 6, 0 FROM games WHERE bgg_id = 237704
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 235252
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 173018
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 6, 0
-  FROM games WHERE bgg_id = 237704
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 337195
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 173018
+  SELECT uid, id, 'owned', 8, 0 FROM games WHERE bgg_id = 98778
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 337195
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 356909
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 8, 0
-  FROM games WHERE bgg_id = 98778
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 366013
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 356909
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 252892
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 366013
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 420737
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 252892
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 320718
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 420737
+  SELECT uid, id, 'owned', 7, 0 FROM games WHERE bgg_id = 234105
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 320718
+  SELECT uid, id, 'owned', 9, 0 FROM games WHERE bgg_id = 154597
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 234105
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 302520
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 9, 0
-  FROM games WHERE bgg_id = 154597
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 239621
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 302520
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 339906
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 239621
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 306482
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 339906
+  SELECT uid, id, 'owned', 5, 0 FROM games WHERE bgg_id = 62319
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 306482
+  SELECT uid, id, 'owned', 7, 0 FROM games WHERE bgg_id = 230667
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 5, 0
-  FROM games WHERE bgg_id = 62319
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 314530
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 230667
+  SELECT uid, id, 'owned', 8, 0 FROM games WHERE bgg_id = 54043
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 314530
+  SELECT uid, id, 'owned', 6, 0 FROM games WHERE bgg_id = 295541
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 8, 0
-  FROM games WHERE bgg_id = 54043
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 254640
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 6, 0
-  FROM games WHERE bgg_id = 295541
+  SELECT uid, id, 'owned', 6, 0 FROM games WHERE bgg_id = 545
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 254640
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 84732
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 6, 0
-  FROM games WHERE bgg_id = 545
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 244584
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 84732
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 374595
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 244584
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 387964
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 374595
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 204602
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 387964
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 241692
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 204602
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 348072
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 241692
+  SELECT uid, id, 'owned', 7, 0 FROM games WHERE bgg_id = 277458
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 348072
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 348450
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 277458
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 370235
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 348450
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 192814
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 370235
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 316412
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 192814
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 282700
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 316412
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 257056
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 282700
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 358690
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 257056
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 298047
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 358690
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 303600
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 298047
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 302670
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 303600
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 321731
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 302670
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 303602
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 321731
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 302669
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 303602
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 302668
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 302669
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 303599
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 302668
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 204498
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 303599
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 235513
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 204498
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 244992
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 235513
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 311715
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 244992
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 207290
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 311715
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 342764
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 207290
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 421020
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 342764
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 220632
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 421020
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 280131
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 220632
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 267945
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 280131
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 1927
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 267945
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 3943
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 1927
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 6866
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 3943
+  SELECT uid, id, 'owned', 7, 0 FROM games WHERE bgg_id = 236143
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 6866
+  SELECT uid, id, 'owned', 7, 0 FROM games WHERE bgg_id = 257939
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 236143
+  SELECT uid, id, 'owned', 7, 0 FROM games WHERE bgg_id = 264284
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 257939
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 915
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 264284
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 275215
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 915
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 418460
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 275215
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 231040
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 418460
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 12942
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 231040
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 91430
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 12942
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 270445
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 91430
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 315071
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 270445
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 160477
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 315071
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 322696
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 160477
+  SELECT uid, id, 'owned', 7, 0 FROM games WHERE bgg_id = 1515
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 322696
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 293537
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 1515
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 299573
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 293537
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 291962
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 299573
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 386102
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 291962
+  SELECT uid, id, 'owned', 7, 0 FROM games WHERE bgg_id = 114283
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 386102
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 415128
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 114283
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 181120
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 415128
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 1383
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 181120
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 327062
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 1383
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 181960
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 327062
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 69676
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 181960
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 319031
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 69676
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 405538
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 319031
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 281637
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 405538
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 306882
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 281637
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 314401
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 306882
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 387780
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 314401
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 371922
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 387780
+  SELECT uid, id, 'owned', 9, 0 FROM games WHERE bgg_id = 237728
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 371922
+  SELECT uid, id, 'owned', 9, 0 FROM games WHERE bgg_id = 264344
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 9, 0
-  FROM games WHERE bgg_id = 237728
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 301085
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 9, 0
-  FROM games WHERE bgg_id = 264344
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 227224
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 301085
+  SELECT uid, id, 'owned', 8, 0 FROM games WHERE bgg_id = 41114
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 227224
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 232666
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 8, 0
-  FROM games WHERE bgg_id = 41114
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 304668
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 232666
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 37728
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 304668
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 278824
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 37728
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 237182
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 278824
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 22245
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 237182
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 344427
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 22245
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 406322
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 344427
+  SELECT uid, id, 'owned', 8, 0 FROM games WHERE bgg_id = 2381
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 406322
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 291453
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 8, 0
-  FROM games WHERE bgg_id = 2381
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 256705
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 291453
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 188834
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 256705
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 287258
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 188834
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 285183
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 287258
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 200847
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 285183
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 211364
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 200847
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 265996
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 211364
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 360692
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 265996
+  SELECT uid, id, 'owned', 9, 0 FROM games WHERE bgg_id = 1198
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 360692
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 432062
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 9, 0
-  FROM games WHERE bgg_id = 1198
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 313262
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 432062
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 255165
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 313262
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 306142
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 255165
+  SELECT uid, id, 'owned', 8, 0 FROM games WHERE bgg_id = 230765
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 306142
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 303553
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 8, 0
-  FROM games WHERE bgg_id = 230765
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 204135
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 303553
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 241590
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 204135
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 303733
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 241590
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 184491
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 303733
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 191679
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 184491
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 238090
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 191679
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 286363
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 238090
+  SELECT uid, id, 'owned', 7, 0 FROM games WHERE bgg_id = 299169
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 286363
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 162886
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 299169
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 432417
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 162886
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 359878
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 432417
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 251658
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 359878
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 123570
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 251658
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 415524
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 123570
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 2653
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 415524
+  SELECT uid, id, 'owned', 7, 0 FROM games WHERE bgg_id = 192291
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 2653
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 406321
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 192291
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 285712
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 406321
+  SELECT uid, id, 'owned', 7, 0 FROM games WHERE bgg_id = 1038
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 285712
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 308416
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 1038
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 369084
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 308416
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 247694
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 369084
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 335609
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 247694
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 344258
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 335609
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 406663
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 344258
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 295293
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 406663
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 274533
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 295293
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 288010
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 274533
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 342070
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 288010
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 295192
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 342070
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 201921
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 295192
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 244536
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 201921
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 186375
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 244536
+  SELECT uid, id, 'owned', 7, 0 FROM games WHERE bgg_id = 261901
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 186375
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 300905
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 7, 0
-  FROM games WHERE bgg_id = 261901
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 312859
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 300905
+  SELECT uid, id, 'owned', 6, 0 FROM games WHERE bgg_id = 295540
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 312859
+  SELECT uid, id, 'owned', 6, 0 FROM games WHERE bgg_id = 299815
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 6, 0
-  FROM games WHERE bgg_id = 295540
+  SELECT uid, id, 'owned', 6, 0 FROM games WHERE bgg_id = 295539
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 6, 0
-  FROM games WHERE bgg_id = 299815
+  SELECT uid, id, 'owned', 6, 0 FROM games WHERE bgg_id = 300848
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 6, 0
-  FROM games WHERE bgg_id = 295539
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 242325
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 6, 0
-  FROM games WHERE bgg_id = 300848
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 352515
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 242325
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 386728
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 352515
+  SELECT uid, id, 'owned', 8, 0 FROM games WHERE bgg_id = 2952
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 386728
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 61135
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', 8, 0
-  FROM games WHERE bgg_id = 2952
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 255907
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 61135
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 356123
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 255907
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 257614
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 356123
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 385529
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 257614
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 315695
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 385529
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 361380
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 315695
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 418871
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 361380
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 418481
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 418871
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 241724
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 418481
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 351540
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 241724
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 177702
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 351540
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 262543
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 177702
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 168680
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 262543
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 298371
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 168680
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 266192
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 298371
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 260334
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 266192
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 354729
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 260334
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 227935
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 354729
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 400366
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 227935
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 269146
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 400366
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 371981
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 269146
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 246759
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 371981
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 247572
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 246759
-  ON CONFLICT (user_id, game_id) DO NOTHING;
-  INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 247572
-  ON CONFLICT (user_id, game_id) DO NOTHING;
-  INSERT INTO user_games (user_id, game_id, status, personal_rating, times_played)
-  SELECT user_id, id, 'owned', NULL, 0
-  FROM games WHERE bgg_id = 424219
+  SELECT uid, id, 'owned', NULL, 0 FROM games WHERE bgg_id = 424219
   ON CONFLICT (user_id, game_id) DO NOTHING;
 
--- Lista de desexos (wishlist)
+-- Lista de desexos
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 447707
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 447707
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 173346
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 173346
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 215065
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 215065
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 429861
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 429861
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 22545
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 22545
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 277670
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 277670
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 338093
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 338093
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 369395
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 369395
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 302388
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 302388
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 393114
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 393114
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 379300
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 379300
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 437384
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 437384
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 332386
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 332386
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 295947
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 295947
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 416851
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 416851
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 195137
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 195137
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 359895
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 359895
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 220700
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 220700
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 178900
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 178900
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 269595
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 269595
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 362020
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 362020
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 454148
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 454148
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 429863
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 429863
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 521
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 521
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 245476
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 245476
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 344554
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 344554
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 381117
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 381117
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 215311
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 215311
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 447243
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 447243
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 97207
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 97207
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 343847
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 343847
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 715
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 715
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 142379
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 142379
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 365653
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 365653
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 424981
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 424981
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 199792
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 199792
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 135779
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 135779
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 192834
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 192834
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 192701
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 192701
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 352574
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 352574
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 420087
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 420087
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 330881
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 330881
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 256478
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 256478
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 368432
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 368432
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 273065
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 273065
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 286215
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 286215
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 291457
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 291457
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 188
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 188
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 330036
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 330036
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 200853
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 200853
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 228234
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 228234
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 366910
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 366910
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 265402
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 265402
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 281259
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 281259
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 28023
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 28023
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 193042
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 193042
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 284378
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 284378
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 183251
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 183251
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 406231
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 406231
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 349082
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 349082
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 320280
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 320280
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 59959
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 59959
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 352890
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 352890
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 118
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 118
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 410919
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 410919
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 235902
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 235902
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 393175
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 393175
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 231733
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 231733
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 192275
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 192275
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 147949
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 147949
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 452304
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 452304
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 429405
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 429405
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 313807
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 313807
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 73365
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 73365
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 198953
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 198953
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 347865
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 347865
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 309728
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 309728
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 295788
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 295788
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 258779
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 258779
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 333280
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 333280
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 402106
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 402106
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 624
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 624
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 332772
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 332772
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 402679
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 402679
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 406454
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 406454
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 194655
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 194655
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 169786
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 169786
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 272380
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 272380
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 92415
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 92415
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 150145
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 150145
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 373106
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 373106
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 338960
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 338960
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 255984
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 255984
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 375459
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 375459
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 391834
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 391834
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 346773
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 346773
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 286096
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 286096
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 375651
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 375651
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 255668
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 255668
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 134352
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 134352
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 425276
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 425276
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 448419
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 448419
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 194690
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 194690
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 237179
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 237179
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 424975
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 424975
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 331106
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 331106
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 353411
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 353411
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 263097
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 263097
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 6830
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 6830
   ON CONFLICT (user_id, game_id) DO NOTHING;
   INSERT INTO user_games (user_id, game_id, status, times_played)
-  SELECT user_id, id, 'wishlist', 0
-  FROM games WHERE bgg_id = 249289
+  SELECT uid, id, 'wishlist', 0 FROM games WHERE bgg_id = 249289
   ON CONFLICT (user_id, game_id) DO NOTHING;
 
 END $$;
