@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Tema por defecto (oscuro) ─────────────────────────── */
+:root {
+  --xogun-bg:      #0f0e17;
+  --xogun-surface: #1a1828;
+  --xogun-card:    #221f35;
+  --xogun-border:  #2e2a45;
+  --xogun-accent:  #c8a96e;
+  --xogun-gold:    #e8c87a;
+  --xogun-text:    #e8e4f0;
+  --xogun-muted:   #8b85a0;
+}
+
+/* ── Tema claro ─────────────────────────────────────────── */
+[data-theme="light"] {
+  --xogun-bg:      #f4f2f9;
+  --xogun-surface: #ffffff;
+  --xogun-card:    #eeeaf6;
+  --xogun-border:  #d4cfe8;
+  --xogun-text:    #1a1828;
+  --xogun-muted:   #6b6480;
+}
+
+@layer base {
+  body {
+    @apply bg-xogun-bg text-xogun-text font-body;
+    min-height: 100vh;
+    transition: background-color .3s ease, color .3s ease;
+  }
+  h1, h2, h3 { @apply font-display; }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { @apply bg-xogun-border rounded-full; }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-xogun-accent text-xogun-bg font-semibold px-4 py-2 rounded-lg
+           hover:opacity-90 active:scale-95 transition-all duration-150 text-sm cursor-pointer;
+  }
+  .btn-secondary {
+    @apply bg-xogun-card border border-xogun-border text-xogun-text font-medium px-4 py-2 rounded-lg
+           hover:border-xogun-accent transition-colors duration-150 text-sm cursor-pointer;
+  }
+  .btn-ghost {
+    @apply text-xogun-muted hover:text-xogun-text transition-colors duration-150 text-sm cursor-pointer px-2 py-1 rounded-lg hover:bg-xogun-card;
+  }
+  .btn-danger {
+    @apply bg-xogun-red text-white font-semibold px-4 py-2 rounded-lg
+           hover:opacity-90 active:scale-95 transition-all duration-150 text-sm cursor-pointer;
+  }
+  .card {
+    @apply bg-xogun-card border border-xogun-border rounded-xl p-4;
+  }
+  .card-hover {
+    @apply card hover:border-xogun-accent/50 transition-colors duration-200 cursor-pointer;
+  }
+  .input {
+    @apply bg-xogun-surface border border-xogun-border text-xogun-text rounded-lg px-3 py-2
+           focus:outline-none focus:border-xogun-accent transition-colors duration-150 text-sm w-full
+           placeholder:text-xogun-muted;
+  }
+  .label {
+    @apply text-xogun-muted text-xs font-mono uppercase tracking-wider mb-1 block;
+  }
+  .badge {
+    @apply text-xs px-2 py-0.5 rounded-full border font-medium;
+  }
+  .section-title {
+    @apply font-display text-2xl text-xogun-accent mb-1;
+  }
+  .section-subtitle {
+    @apply text-xogun-muted text-sm;
+  }
+  .modal-backdrop {
+    @apply fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4;
+  }
+  .modal {
+    @apply bg-xogun-card border border-xogun-border rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-slide-up;
+  }
+  .modal-header {
+    @apply flex items-center justify-between p-5 border-b border-xogun-border;
+  }
+  .modal-footer {
+    @apply flex justify-end gap-2 p-5 border-t border-xogun-border;
+  }
+  .tab-active {
+    @apply bg-xogun-card text-xogun-accent border border-xogun-border;
+  }
+  .tab-inactive {
+    @apply text-xogun-muted hover:text-xogun-text hover:bg-xogun-card;
+  }
+}
