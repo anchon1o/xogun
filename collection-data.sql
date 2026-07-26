@@ -444,7 +444,7 @@ ON CONFLICT (bgg_id) DO UPDATE SET
 -- ============================================================
 
 DO $$
-DECLARE uid UUID := '8e293a4f-0a9b-4e1b-9cd8-d82fe71d35ac';
+DECLARE uid UUID := 'TU_USER_ID';
 BEGIN
 
 -- Xogos propios
