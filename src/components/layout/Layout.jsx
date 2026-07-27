@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext'
 import { useAppConfig } from '../../contexts/AppConfigContext'
 import { Library, Wrench, Shield, LogOut, LogIn, BookOpen, Swords, User, Menu, X, ChevronDown } from 'lucide-react'
 import { UserAvatar } from '../../hooks/useAvatars'
+import Logo from '../shared/Logo'
 
 export default function Layout() {
   const { user, profile, signOut } = useAuth()
@@ -30,7 +31,7 @@ export default function Layout() {
       <header className="bg-xogun-surface border-b border-xogun-border sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 h-14 flex items-center gap-4">
           <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-            <img src="/logo-icon.png" alt="Xogún" className="w-8 h-8 object-contain" />
+            <Logo size={32} />
             <span className="font-display text-lg text-xogun-accent tracking-wider hidden sm:block">
               {config.app_name || 'Xogún'}
             </span>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAppConfig } from '../../contexts/AppConfigContext'
+import Logo from '../../components/shared/Logo'
 
 const ACCENT_PRESETS = [
   '#c8a96e','#e8c87a','#6e8dc8','#6ec87e','#c86e6e',
@@ -9,10 +10,21 @@ const ACCENT_PRESETS = [
 export default function AdminAppearance() {
   const { config, updateConfig } = useAppConfig()
   const [appName, setAppName] = useState(config.app_name || 'Xogún')
+  const [logoUrl, setLogoUrl] = useState(config.logo_url || '')
 
   async function saveName() {
     await updateConfig('app_name', appName)
     alert('Nome gardado')
+  }
+
+  async function saveLogo() {
+    await updateConfig('logo_url', logoUrl || null)
+    alert('Logo gardado')
+  }
+
+  function resetLogo() {
+    setLogoUrl('')
+    updateConfig('logo_url', null)
   }
 
   const fields = config.visible_game_fields || {}
@@ -31,6 +43,31 @@ export default function AdminAppearance() {
   return (
     <div className="space-y-6">
       <h2 className="font-display text-xl text-xogun-accent">Aparencia</h2>
+
+      <div className="card space-y-4">
+        <h3 className="font-medium text-sm text-xogun-muted uppercase tracking-wider">Logo</h3>
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 rounded-xl bg-xogun-surface border border-xogun-border flex items-center justify-center">
+            <Logo size={40} />
+          </div>
+          <div className="flex-1 space-y-2">
+            <p className="text-xogun-muted text-xs">
+              Por defecto úsase o selo de Xogún, que se adapta automaticamente á cor de acento do tema.
+              Podes subilo a calquera servizo de imaxes (imgur, etc.) e pegar aquí a URL para usar un logo personalizado.
+            </p>
+            <div className="flex gap-2">
+              <input className="input flex-1" placeholder="https://... (URL da imaxe do logo)"
+                value={logoUrl} onChange={e => setLogoUrl(e.target.value)} />
+              <button onClick={saveLogo} className="btn-primary flex-shrink-0">Gardar</button>
+            </div>
+            {config.logo_url && (
+              <button onClick={resetLogo} className="text-xogun-muted text-xs hover:text-xogun-red transition-colors underline">
+                Restaurar selo por defecto
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
 
       <div className="card space-y-4">
         <h3 className="font-medium text-sm text-xogun-muted uppercase tracking-wider">Nome da aplicación</h3>

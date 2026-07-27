@@ -26,14 +26,7 @@ export default function AdminSuggestions() {
       .update({ status, reviewed_by: user.id, reviewed_at: new Date().toISOString() })
       .eq('id', id)
     if (status === 'approved') {
-      const update = {}
-      // Para arrays como images/videos, necesitamos hacer append
-      if (field === 'images' || field === 'videos') {
-        const { data: game } = await supabase.from('games').select(field).eq('id', gameId).single()
-        update[field] = [...(game?.[field] || []), ...newValue]
-      } else {
-        update[field] = newValue
-      }
+      const update = { [field]: newValue }
       await supabase.from('games').update(update).eq('id', gameId)
     }
     fetch()

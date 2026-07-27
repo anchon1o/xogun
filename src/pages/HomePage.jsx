@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { Library, Wrench } from 'lucide-react'
+import Logo from '../components/shared/Logo'
 
 export default function HomePage() {
   const navigate = useNavigate()
@@ -31,7 +32,7 @@ export default function HomePage() {
       {/* Centered logo seal */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
         <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-xogun-bg border-2 border-xogun-accent flex items-center justify-center shadow-2xl">
-          <img src="/logo-icon.png" alt="Xogún" className="w-12 h-12 md:w-14 md:h-14 object-contain" />
+          <Logo size={56} className="md:w-14 md:h-14" />
         </div>
       </div>
 

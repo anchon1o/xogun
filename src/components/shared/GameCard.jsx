@@ -1,19 +1,25 @@
-import { Users, Clock, Star, Plus, Check } from 'lucide-react'
+import { Users, Clock, Star, Plus, Check, Edit2 } from 'lucide-react'
 import { useAppConfig } from '../../contexts/AppConfigContext'
 
-export default function GameCard({ game, userEntry, onAddToCollection, onOpenDetail, compact = false }) {
+export default function GameCard({ game, userEntry, onAddToCollection, onEdit, canEdit, compact = false }) {
   const { isFieldVisible } = useAppConfig()
   const image = game.images?.[0]
 
   return (
-    <div onClick={() => onOpenDetail?.(game)}
-      className="card-hover flex flex-col group animate-fade-in">
+    <div className="card-hover flex flex-col group animate-fade-in">
       {/* Cover */}
-      <div className={`rounded-lg overflow-hidden bg-xogun-surface flex items-center justify-center mb-3 flex-shrink-0 ${compact ? 'h-28' : 'aspect-[4/3]'}`}>
+      <div className={`rounded-lg overflow-hidden bg-xogun-surface flex items-center justify-center mb-3 flex-shrink-0 relative ${compact ? 'h-28' : 'aspect-[4/3]'}`}>
         {image
           ? <img src={image} alt={game.name} className="w-full h-full object-cover" loading="lazy" />
           : <span className="text-4xl">🎲</span>
         }
+        {canEdit && onEdit && (
+          <button onClick={e => { e.stopPropagation(); onEdit(game) }}
+            className="absolute top-1.5 right-1.5 w-7 h-7 rounded-lg bg-black/60 backdrop-blur-sm flex items-center justify-center
+                       opacity-0 group-hover:opacity-100 transition-opacity text-white hover:bg-black/80">
+            <Edit2 size={13} />
+          </button>
+        )}
       </div>
 
       {/* Info */}

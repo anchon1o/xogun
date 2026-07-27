@@ -5,6 +5,7 @@ const AppConfigContext = createContext(null)
 
 const DEFAULTS = {
   app_name: 'Xogún',
+  logo_url: null,
   features: {
     tools_public: true,
     catalog_public: true,

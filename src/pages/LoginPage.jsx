@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import Logo from '../components/shared/Logo'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
@@ -22,7 +23,7 @@ export default function LoginPage() {
     <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <img src="/logo-icon.png" alt="Xogún" className="w-16 h-16 object-contain mx-auto mb-4" />
+          <Logo size={64} className="mx-auto mb-4" />
           <h1 className="font-display text-3xl text-xogun-accent tracking-wider">Xogún</h1>
           <p className="text-xogun-muted text-sm mt-1">Inicia sesión para acceder á túa colección</p>
         </div>

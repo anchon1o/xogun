@@ -7,9 +7,9 @@ function Toggle({ label, description, checked, onChange }) {
         <p className="text-sm font-medium text-xogun-text">{label}</p>
         {description && <p className="text-xogun-muted text-xs mt-0.5">{description}</p>}
       </div>
-      <button onClick={() => onChange(!checked)}
-        className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${checked ? 'bg-xogun-accent' : 'bg-xogun-border'}`}>
-        <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${checked ? 'translate-x-6' : 'translate-x-1'}`} />
+      <button onClick={() => onChange(!checked)} type="button"
+        className={`relative w-12 h-7 rounded-full transition-colors flex-shrink-0 shrink-0 ${checked ? 'bg-xogun-accent' : 'bg-xogun-border'}`}>
+        <span className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200 ${checked ? 'translate-x-5' : 'translate-x-0'}`} />
       </button>
     </div>
   )

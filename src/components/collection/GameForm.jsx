@@ -4,12 +4,14 @@ import { useAuth } from '../../contexts/AuthContext'
 import { useAppConfig } from '../../contexts/AppConfigContext'
 import { useCatalogMeta } from '../../hooks/useCatalogMeta'
 import { useGames } from '../../hooks/useGames'
+import { supabase } from '../../lib/supabase'
 
 export default function GameForm({ game, onClose, onSaved }) {
   const { user, profile } = useAuth()
   const { isFieldVisible } = useAppConfig()
   const { categories, mechanics } = useCatalogMeta()
   const { addGame, updateGame, checkDuplicate } = useGames()
+  const isAdmin = !!profile?.is_admin
 
   const [form, setForm] = useState({
     name: game?.name || '', description: game?.description || '',
@@ -25,6 +27,7 @@ export default function GameForm({ game, onClose, onSaved }) {
   const [saving, setSaving]           = useState(false)
   const [error, setError]             = useState('')
   const [duplicate, setDuplicate]     = useState(null)
+  const [suggestionSent, setSuggestionSent] = useState(false)
 
   function set(key, val) { setForm(f => ({ ...f, [key]: val })) }
   function toggleArray(key, id) {
@@ -36,19 +39,74 @@ export default function GameForm({ game, onClose, onSaved }) {
   async function handleSave() {
     if (!form.name.trim()) { setError('O nome é obrigatorio'); return }
     setSaving(true); setError('')
+
+    // Creación dun xogo novo (sen game existente)
     if (!game) {
       const dup = await checkDuplicate(form.name, form.bgg_id || null)
       if (dup) { setDuplicate(dup); setSaving(false); return }
+
+      const numFields = ['year_published','min_players','max_players','min_duration','max_duration','age','bgg_id']
+      const floatFields = ['complexity','bgg_rating']
+      const payload = { ...form, added_by: user?.id, approved: isAdmin,
+        ...numFields.reduce((a,k) => ({ ...a, [k]: form[k]===''?null:Number(form[k]) }), {}),
+        ...floatFields.reduce((a,k) => ({ ...a, [k]: form[k]===''?null:parseFloat(form[k]) }), {}),
+      }
+      const { error } = await addGame(payload)
+      if (error) { setError(error.message); setSaving(false) } else { onSaved?.(); onClose() }
+      return
     }
+
+    // Edición dun xogo existente
     const numFields = ['year_published','min_players','max_players','min_duration','max_duration','age','bgg_id']
     const floatFields = ['complexity','bgg_rating']
-    const payload = { ...form, added_by: user?.id, approved: profile?.is_admin || false,
+    const normalized = { ...form,
       ...numFields.reduce((a,k) => ({ ...a, [k]: form[k]===''?null:Number(form[k]) }), {}),
       ...floatFields.reduce((a,k) => ({ ...a, [k]: form[k]===''?null:parseFloat(form[k]) }), {}),
     }
-    const { error } = game ? await updateGame(game.id, payload) : await addGame(payload)
-    if (error) { setError(error.message); setSaving(false) } else { onSaved?.(); onClose() }
+
+    if (isAdmin) {
+      // Admin: edición directa
+      const { error } = await updateGame(game.id, normalized)
+      if (error) { setError(error.message); setSaving(false) } else { onSaved?.(); onClose() }
+    } else {
+      // Usuario normal: crear suxestións de edición por cada campo cambiado
+      const changedFields = Object.keys(normalized).filter(key => {
+        const oldVal = game[key]
+        const newVal = normalized[key]
+        return JSON.stringify(oldVal ?? null) !== JSON.stringify(newVal ?? null)
+      })
+
+      if (changedFields.length === 0) { setSaving(false); onClose(); return }
+
+      const suggestions = changedFields.map(field => ({
+        game_id: game.id,
+        suggested_by: user.id,
+        field,
+        old_value: game[field] ?? null,
+        new_value: normalized[field] ?? null,
+      }))
+
+      const { error } = await supabase.from('game_edit_suggestions').insert(suggestions)
+      if (error) { setError(error.message); setSaving(false) }
+      else {
+        setSuggestionSent(true)
+        setSaving(false)
+        setTimeout(() => { onClose() }, 1800)
+      }
+    }
   }
+
+  if (suggestionSent) return (
+    <div className="modal-backdrop">
+      <div className="modal max-w-sm">
+        <div className="p-8 text-center">
+          <div className="text-4xl mb-3">✅</div>
+          <p className="font-display text-lg text-xogun-accent mb-1">Suxestión enviada</p>
+          <p className="text-xogun-muted text-sm">Un administrador revisará os teus cambios antes de que se apliquen.</p>
+        </div>
+      </div>
+    </div>
+  )
 
   if (duplicate) return (
     <div className="modal-backdrop">
@@ -76,13 +134,18 @@ export default function GameForm({ game, onClose, onSaved }) {
     <div className="modal-backdrop">
       <div className="modal">
         <div className="modal-header">
-          <h2 className="font-display text-lg text-xogun-accent">{game ? 'Editar xogo' : 'Engadir xogo ao catálogo'}</h2>
+          <h2 className="font-display text-lg text-xogun-accent">{!game ? 'Engadir xogo ao catálogo' : isAdmin ? 'Editar xogo' : 'Suxerir edición'}</h2>
           <button onClick={onClose}><X size={18} className="text-xogun-muted" /></button>
         </div>
         <div className="p-5 space-y-4">
-          {!profile?.is_admin && !game && (
+          {!isAdmin && !game && (
             <div className="bg-xogun-accent/10 border border-xogun-accent/30 rounded-lg px-3 py-2 text-xs text-xogun-accent">
               ℹ️ O xogo quedará pendente de aprobación polo administrador antes de aparecer no catálogo.
+            </div>
+          )}
+          {!isAdmin && game && (
+            <div className="bg-xogun-accent/10 border border-xogun-accent/30 rounded-lg px-3 py-2 text-xs text-xogun-accent">
+              ℹ️ Como non es administrador, os teus cambios enviaranse como suxestión de edición para revisión.
             </div>
           )}
           <div><label className="label">Nome *</label>
@@ -148,7 +211,7 @@ export default function GameForm({ game, onClose, onSaved }) {
         <div className="modal-footer">
           <button onClick={onClose} className="btn-secondary">Cancelar</button>
           <button onClick={handleSave} disabled={saving} className="btn-primary disabled:opacity-50">
-            {saving ? 'Gardando...' : game ? 'Gardar cambios' : 'Engadir ao catálogo'}
+            {saving ? 'Gardando...' : !game ? 'Engadir ao catálogo' : isAdmin ? 'Gardar cambios' : 'Enviar suxestión'}
           </button>
         </div>
       </div>
