@@ -282,6 +282,7 @@ CREATE TABLE user_games (
   user_id         UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   game_id         UUID NOT NULL REFERENCES games(id) ON DELETE CASCADE,
   status          TEXT NOT NULL DEFAULT 'owned',  -- 'owned'|'wishlist'|'played'|'favorite'
+  visibility      TEXT DEFAULT 'friends',         -- 'private'|'friends'|'public' — visibilidade DESTA entrada
   personal_rating SMALLINT CHECK (personal_rating BETWEEN 1 AND 10),
   notes           TEXT,
   times_played    SMALLINT DEFAULT 0,
@@ -292,20 +293,17 @@ CREATE TABLE user_games (
 
 ALTER TABLE user_games ENABLE ROW LEVEL SECURITY;
 
--- Visibilidade: respecta collection_visibility do perfil
-CREATE POLICY "ver coleccións segundo visibilidade"
+-- Visibilidade por entrada: cada estado (Teño/Quero ter/...) pode ter
+-- a súa propia visibilidade, en vez de depender dun único axuste global.
+CREATE POLICY "ver entradas segundo a súa propia visibilidade"
   ON user_games FOR SELECT USING (
     auth.uid() = user_id OR
-    EXISTS (
-      SELECT 1 FROM profiles p WHERE p.id = user_id AND (
-        p.collection_visibility = 'public' OR
-        (p.collection_visibility = 'friends' AND EXISTS (
-          SELECT 1 FROM friendships f WHERE f.status = 'accepted' AND
-          ((f.requester = auth.uid() AND f.addressee = user_id) OR
-           (f.addressee = auth.uid() AND f.requester = user_id))
-        ))
-      )
-    )
+    visibility = 'public' OR
+    (visibility = 'friends' AND EXISTS (
+      SELECT 1 FROM friendships f WHERE f.status = 'accepted' AND
+      ((f.requester = auth.uid() AND f.addressee = user_id) OR
+       (f.addressee = auth.uid() AND f.requester = user_id))
+    ))
   );
 CREATE POLICY "usuario xestiona a súa colección"
   ON user_games FOR ALL USING (auth.uid() = user_id);
@@ -320,6 +318,72 @@ $$ LANGUAGE SQL STABLE;
 
 CREATE INDEX user_games_user ON user_games(user_id);
 CREATE INDEX user_games_game ON user_games(game_id);
+
+
+-- ── 9b. GAME LISTS (listas personalizadas, ex: "Excursión agosto") ──
+-- Referencian xogos do catálogo sen duplicar datos — só agrupan.
+CREATE TABLE game_lists (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id     UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  name        TEXT NOT NULL,
+  description TEXT,
+  emoji       TEXT DEFAULT '📋',
+  visibility  TEXT DEFAULT 'private',  -- 'private'|'friends'|'public'
+  created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE game_lists ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "ver listas segundo visibilidade"
+  ON game_lists FOR SELECT USING (
+    auth.uid() = user_id OR
+    visibility = 'public' OR
+    (visibility = 'friends' AND EXISTS (
+      SELECT 1 FROM friendships f WHERE f.status = 'accepted' AND
+      ((f.requester = auth.uid() AND f.addressee = user_id) OR
+       (f.addressee = auth.uid() AND f.requester = user_id))
+    ))
+  );
+CREATE POLICY "usuario xestiona as súas listas"
+  ON game_lists FOR ALL USING (auth.uid() = user_id);
+
+CREATE INDEX game_lists_user ON game_lists(user_id);
+
+
+-- ── 9c. GAME LIST ITEMS (elementos dentro de cada lista) ──
+CREATE TABLE game_list_items (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  list_id    UUID NOT NULL REFERENCES game_lists(id) ON DELETE CASCADE,
+  game_id    UUID NOT NULL REFERENCES games(id) ON DELETE CASCADE,
+  note       TEXT,
+  sort_order INT DEFAULT 0,
+  added_at   TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (list_id, game_id)
+);
+
+ALTER TABLE game_list_items ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "ver elementos coa lista"
+  ON game_list_items FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM game_lists l WHERE l.id = list_id AND (
+        l.user_id = auth.uid() OR
+        l.visibility = 'public' OR
+        (l.visibility = 'friends' AND EXISTS (
+          SELECT 1 FROM friendships f WHERE f.status = 'accepted' AND
+          ((f.requester = auth.uid() AND f.addressee = l.user_id) OR
+           (f.addressee = auth.uid() AND f.requester = l.user_id))
+        ))
+      )
+    )
+  );
+CREATE POLICY "propietario da lista xestiona elementos"
+  ON game_list_items FOR ALL USING (
+    EXISTS (SELECT 1 FROM game_lists l WHERE l.id = list_id AND l.user_id = auth.uid())
+  );
+
+CREATE INDEX list_items_list ON game_list_items(list_id);
+CREATE INDEX list_items_game ON game_list_items(game_id);
 
 
 -- ── 10. SCORE TEMPLATES ─────────────────────────────────────

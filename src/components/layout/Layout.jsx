@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Outlet, NavLink, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { useAppConfig } from '../../contexts/AppConfigContext'
-import { Library, Wrench, Shield, LogOut, LogIn, BookOpen, Swords, User, Menu, X, ChevronDown } from 'lucide-react'
+import { Library, Wrench, Shield, LogOut, LogIn, Swords, User, Menu, X, ChevronDown } from 'lucide-react'
 import { UserAvatar } from '../../hooks/useAvatars'
 import Logo from '../shared/Logo'
 
@@ -18,10 +18,9 @@ export default function Layout() {
   }
 
   const navLinks = [
-    { to: '/catalogo',    icon: Library,  label: 'Catálogo' },
+    { to: '/catalogo',    icon: Library,  label: 'Xogos' },
     { to: '/ferramentas', icon: Wrench,   label: 'Ferramentas' },
     ...(user ? [
-      { to: '/coleccion', icon: BookOpen, label: 'Colección' },
       { to: '/partidas',  icon: Swords,   label: 'Partidas' },
     ] : []),
   ]

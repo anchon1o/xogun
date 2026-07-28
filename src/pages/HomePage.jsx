@@ -17,9 +17,9 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-b md:bg-gradient-to-r from-xogun-accent/0 to-xogun-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <Library size={56} className="text-xogun-accent relative z-10" strokeWidth={1.5} />
         <div className="text-center relative z-10 px-6">
-          <h2 className="font-display text-3xl text-xogun-text mb-2">Colección</h2>
+          <h2 className="font-display text-3xl text-xogun-text mb-2">Xogos</h2>
           <p className="text-xogun-muted text-sm max-w-xs leading-relaxed">
-            Catálogo de xogos, coleccións persoais e historial de partidas.
+            Catálogo completo, a túa colección persoal e historial de partidas.
           </p>
           {!user && (
             <span className="mt-4 inline-block text-xs text-xogun-muted border border-xogun-border rounded-full px-3 py-1">

@@ -1,16 +1,10 @@
 import { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useAvatars } from '../hooks/useAvatars'
-import { useCollection, COLLECTION_STATUSES } from '../hooks/useCollection'
+import { useCollection, COLLECTION_STATUSES, VISIBILITY_OPTIONS } from '../hooks/useCollection'
 import { useFriendships } from '../hooks/useFriendships'
 import { UserAvatar } from '../hooks/useAvatars'
 import { Save, Users, BookOpen, Swords } from 'lucide-react'
-
-const VISIBILITY_OPTIONS = [
-  { id: 'private', label: 'Privada',       icon: '🔒' },
-  { id: 'friends', label: 'Só amigos',     icon: '👥' },
-  { id: 'public',  label: 'Pública',       icon: '🌐' },
-]
 
 const THEME_OPTIONS = [
   { id: 'dark',  label: 'Escuro' },
@@ -144,12 +138,13 @@ export default function ProfilePage() {
         </div>
 
         <div>
-          <label className="label">Visibilidade da colección</label>
+          <label className="label">Visibilidade por defecto</label>
+          <p className="text-xogun-muted text-xs mb-2">Aplícase aos xogos novos que engadas. Podes cambiala individualmente en cada xogo dende a túa colección.</p>
           <div className="flex gap-2">
             {VISIBILITY_OPTIONS.map(v => (
               <button key={v.id} onClick={() => set('collection_visibility', v.id)}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm border transition-colors ${form.collection_visibility === v.id ? 'border-xogun-accent text-xogun-accent bg-xogun-accent/10' : 'border-xogun-border text-xogun-muted hover:border-xogun-accent'}`}>
-                {v.icon} {v.label}
+                {v.emoji} {v.label}
               </button>
             ))}
           </div>

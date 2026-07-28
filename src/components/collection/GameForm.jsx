@@ -33,10 +33,63 @@ export default function GameForm({ game, onClose, onSaved }) {
   const [error, setError]             = useState('')
   const [duplicate, setDuplicate]     = useState(null)
   const [suggestionSent, setSuggestionSent] = useState(false)
+  const [bggUrl, setBggUrl]           = useState('')
+  const [bggImporting, setBggImporting] = useState(false)
+  const [bggError, setBggError]       = useState('')
 
   function set(key, val) { setForm(f => ({ ...f, [key]: val })) }
   function toggleArray(key, id) {
     setForm(f => { const arr = f[key] || []; return { ...f, [key]: arr.includes(id) ? arr.filter(x => x !== id) : [...arr, id] } })
+  }
+
+  async function importFromBgg() {
+    if (!bggUrl.trim()) return
+    setBggImporting(true); setBggError('')
+    try {
+      const res = await fetch(`/api/bgg-import?url=${encodeURIComponent(bggUrl.trim())}`)
+      const data = await res.json()
+      if (!res.ok) { setBggError(data.error || 'Erro ao importar'); setBggImporting(false); return }
+
+      // Emparellar categorías/mecánicas suxeridas por BGG (texto libre)
+      // coas listaxes internas configurables, por coincidencia aproximada de nome.
+      function matchIds(suggestedNames, localList) {
+        const ids = []
+        for (const name of suggestedNames || []) {
+          const found = localList.find(l =>
+            l.name.toLowerCase().includes(name.toLowerCase()) ||
+            name.toLowerCase().includes(l.name.toLowerCase())
+          )
+          if (found && !ids.includes(found.id)) ids.push(found.id)
+        }
+        return ids
+      }
+
+      setForm(f => ({
+        ...f,
+        name: data.name || f.name,
+        description: data.description || f.description,
+        publisher: data.publisher || f.publisher,
+        designer: data.designer || f.designer,
+        year_published: data.year_published ?? f.year_published,
+        min_players: data.min_players ?? f.min_players,
+        max_players: data.max_players ?? f.max_players,
+        min_duration: data.min_duration ?? f.min_duration,
+        max_duration: data.max_duration ?? f.max_duration,
+        age: data.age ?? f.age,
+        complexity: data.complexity ?? f.complexity,
+        bgg_rating: data.bgg_rating ?? f.bgg_rating,
+        bgg_id: data.bgg_id ?? f.bgg_id,
+        images: data.images?.length ? data.images : f.images,
+        category_ids: matchIds(data.suggested_categories, categories).length
+          ? [...new Set([...f.category_ids, ...matchIds(data.suggested_categories, categories)])] : f.category_ids,
+        mechanic_ids: matchIds(data.suggested_mechanics, mechanics).length
+          ? [...new Set([...f.mechanic_ids, ...matchIds(data.suggested_mechanics, mechanics)])] : f.mechanic_ids,
+      }))
+      setBggUrl('')
+    } catch {
+      setBggError('Non se puido conectar co servidor')
+    }
+    setBggImporting(false)
   }
   function addImage() { if (!newImageUrl.trim()) return; setForm(f => ({ ...f, images: [...f.images, newImageUrl.trim()] })); setNewImageUrl('') }
   function removeImage(idx) { setForm(f => ({ ...f, images: f.images.filter((_, i) => i !== idx) })) }
@@ -159,6 +212,24 @@ export default function GameForm({ game, onClose, onSaved }) {
               ℹ️ Como non es administrador, os teus cambios enviaranse como suxestión de edición para revisión.
             </div>
           )}
+
+          {!game && (
+            <div className="bg-xogun-surface border border-xogun-border rounded-lg p-3 space-y-2">
+              <label className="label mb-0">Importar rápido desde BGG</label>
+              <div className="flex gap-2">
+                <input className="input flex-1" placeholder="Pega o link do xogo en boardgamegeek.com..."
+                  value={bggUrl} onChange={e => setBggUrl(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && importFromBgg()} />
+                <button onClick={importFromBgg} disabled={bggImporting || !bggUrl.trim()}
+                  className="btn-secondary px-3 flex-shrink-0 disabled:opacity-50">
+                  {bggImporting ? '…' : 'Importar'}
+                </button>
+              </div>
+              {bggError && <p className="text-xogun-red text-xs">{bggError}</p>}
+              <p className="text-xogun-muted text-[11px]">Encherá automaticamente os campos abaixo — revísaos antes de gardar. A imaxe importada de BGG pode non cargar (BGG bloquea a súa visualización fóra do seu sitio); se pasa isto, substitúea por outra URL.</p>
+            </div>
+          )}
+
           <div><label className="label">Nome *</label>
             <input className="input" value={form.name} onChange={e => set('name', e.target.value)} placeholder="Nome do xogo" /></div>
           <div className="grid grid-cols-2 gap-3">

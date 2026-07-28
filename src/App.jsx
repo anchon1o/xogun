@@ -7,8 +7,7 @@ import { MusicPlayerProvider } from './contexts/MusicPlayerContext'
 import Layout from './components/layout/Layout'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
-import CatalogPage from './pages/CatalogPage'
-import CollectionPage from './pages/CollectionPage'
+import GamesPage from './pages/GamesPage'
 import ToolsPage from './pages/ToolsPage'
 import MatchesPage from './pages/MatchesPage'
 import ProfilePage from './pages/ProfilePage'
@@ -58,9 +57,9 @@ function AppRoutes() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/" element={<Layout />}>
               <Route index element={<HomePage />} />
-              <Route path="catalogo"    element={<CatalogPage />} />
+              <Route path="catalogo"    element={<GamesPage />} />
               <Route path="ferramentas" element={<ToolsPage />} />
-              <Route path="coleccion"   element={<PrivateRoute><CollectionPage /></PrivateRoute>} />
+              <Route path="coleccion"   element={<Navigate to="/catalogo" replace />} />
               <Route path="partidas"    element={<PrivateRoute><MatchesPage /></PrivateRoute>} />
               <Route path="perfil"      element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
               <Route path="admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>

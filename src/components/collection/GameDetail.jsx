@@ -1,5 +1,6 @@
 import { X, Users, Clock, Star, ExternalLink, Youtube, FileText, Edit2 } from 'lucide-react'
 import { useCatalogMeta } from '../../hooks/useCatalogMeta'
+import ImagePreview from '../shared/ImagePreview'
 
 const VIDEO_TYPE_LABELS = {
   tutorial: 'Tutorial',
@@ -37,7 +38,7 @@ export default function GameDetail({ game, onClose, onEdit, canEdit }) {
           {/* Header con imaxe */}
           <div className="flex gap-4">
             {game.images?.[0] && (
-              <img src={game.images[0]} alt={game.name} className="w-28 h-28 object-cover rounded-lg flex-shrink-0" />
+              <ImagePreview src={game.images[0]} alt={game.name} size={112} className="rounded-lg flex-shrink-0" fallbackIcon="🎲" />
             )}
             <div className="flex-1 min-w-0">
               {game.year_published && <p className="text-xogun-muted text-sm">{game.year_published}</p>}

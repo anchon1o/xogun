@@ -8,6 +8,12 @@ export const COLLECTION_STATUSES = [
   { id: 'favorite', label: 'Favorito', emoji: '❤️', color: '#c86e6e' },
 ]
 
+export const VISIBILITY_OPTIONS = [
+  { id: 'private', label: 'Privada',   emoji: '🔒' },
+  { id: 'friends', label: 'Só amigos', emoji: '👥' },
+  { id: 'public',  label: 'Pública',   emoji: '🌐' },
+]
+
 export function useCollection(userId) {
   const [collection, setCollection] = useState([])
   const [loading, setLoading]       = useState(true)
@@ -23,15 +29,17 @@ export function useCollection(userId) {
       .from('user_games')
       .select('*, games(*)')
       .eq('user_id', userId)
-      .order('created_at', { ascending: false })
+      .order('name', { foreignTable: 'games' })
     setCollection(data || [])
     setLoading(false)
   }
 
-  async function addToCollection(gameId, status = 'owned') {
+  async function addToCollection(gameId, status = 'owned', visibility = null) {
+    const payload = { user_id: userId, game_id: gameId, status }
+    if (visibility) payload.visibility = visibility
     const { data, error } = await supabase
       .from('user_games')
-      .upsert({ user_id: userId, game_id: gameId, status }, { onConflict: 'user_id,game_id' })
+      .upsert(payload, { onConflict: 'user_id,game_id' })
       .select('*, games(*)').single()
     if (!error) setCollection(c => [data, ...c.filter(x => x.game_id !== gameId)])
     return { error }
@@ -57,6 +65,10 @@ export function useCollection(userId) {
     return updateEntry(gameId, { times_played: times })
   }
 
+  async function setVisibility(gameId, visibility) {
+    return updateEntry(gameId, { visibility })
+  }
+
   function getEntry(gameId) { return collection.find(x => x.game_id === gameId) }
   function hasGame(gameId)  { return !!getEntry(gameId) }
 
@@ -69,5 +81,5 @@ export function useCollection(userId) {
     timesPlayed: collection.reduce((acc, x) => acc + (x.times_played || 0), 0),
   }
 
-  return { collection, loading, stats, refetch: fetch, addToCollection, removeFromCollection, updateEntry, incrementPlayed, getEntry, hasGame }
+  return { collection, loading, stats, refetch: fetch, addToCollection, removeFromCollection, updateEntry, incrementPlayed, setVisibility, getEntry, hasGame }
 }
