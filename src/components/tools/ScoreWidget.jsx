@@ -1,17 +1,34 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Plus, Trash2, RotateCcw, Trophy } from 'lucide-react'
+import { useGameSession } from '../../contexts/GameSessionContext'
 
 const COLORS = ['#c8a96e','#6e8dc8','#6ec87e','#c86e6e','#c86ec8','#6ec8c8','#c8b46e','#8e6ec8']
 
+function playersFromSession(sessionPlayers) {
+  return sessionPlayers.map(p => ({ id: p.id, name: p.name, scores: [], color: p.color }))
+}
+
 export default function ScoreWidget() {
-  const [players, setPlayers] = useState([
-    { id: 1, name: 'Xogador 1', scores: [], color: COLORS[0] },
-    { id: 2, name: 'Xogador 2', scores: [], color: COLORS[1] },
-  ])
+  const session = useGameSession()
+  const hasSession = session?.hasActiveSession
+
+  const [players, setPlayers] = useState(() =>
+    hasSession
+      ? playersFromSession(session.players)
+      : [
+          { id: 'p1', name: 'Xogador 1', scores: [], color: COLORS[0] },
+          { id: 'p2', name: 'Xogador 2', scores: [], color: COLORS[1] },
+        ]
+  )
   const [inputs, setInputs] = useState({})
 
+  // Se a sesión compartida cambia (novo xogo/xogadores), reiniciamos o marcador
+  useEffect(() => {
+    if (hasSession) setPlayers(playersFromSession(session.players))
+  }, [session?.players])
+
   function addPlayer() {
-    const id = Date.now()
+    const id = crypto.randomUUID()
     setPlayers(p => [...p, { id, name: `Xogador ${p.length + 1}`, scores: [], color: COLORS[p.length % COLORS.length] }])
   }
   function removePlayer(id) { setPlayers(p => p.filter(x => x.id !== id)) }
@@ -31,6 +48,12 @@ export default function ScoreWidget() {
 
   return (
     <div className="space-y-4">
+      {hasSession && (
+        <p className="text-xogun-muted text-xs -mt-1">
+          Usando xogadores da sesión activa {session.game ? `· ${session.game.name}` : ''}
+        </p>
+      )}
+
       {/* Ranking bars */}
       {totals.some(p => p.total !== 0) && (
         <div className="space-y-2">

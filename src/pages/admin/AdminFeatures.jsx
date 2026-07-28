@@ -71,6 +71,7 @@ export default function AdminFeatures() {
         <Toggle label="🎯 Contador de obxectivos" checked={tools.objective_counter} onChange={v => updateTool('objective_counter', v)} />
         <Toggle label="🎰 Selector de xogador inicial" checked={tools.first_player} onChange={v => updateTool('first_player', v)} />
         <Toggle label="📅 Planificador de sesión" checked={tools.session_planner} onChange={v => updateTool('session_planner', v)} />
+        <Toggle label="🎵 Reprodutor de música" checked={tools.music} onChange={v => updateTool('music', v)} />
       </div>
     </div>
   )

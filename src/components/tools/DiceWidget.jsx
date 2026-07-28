@@ -18,6 +18,95 @@ const GRADIENT_SWATCHES = [
   { c1: '#b98cff', c2: '#5b2ca8', angle: 135 },
 ]
 
+// Mini editor de debuxo para as caras da moeda (Cara/Cruz)
+function CoinFaceEditor({ initialDataUrl, onSave, onClose, label }) {
+  const canvasRef = useRef(null)
+  const drawing = useRef(false)
+  const [color, setColor] = useState('#c8a96e')
+  const [brushSize, setBrushSize] = useState(6)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext('2d')
+    ctx.fillStyle = '#181206'
+    ctx.beginPath()
+    ctx.arc(128, 128, 126, 0, Math.PI * 2)
+    ctx.fill()
+    if (initialDataUrl) {
+      const img = new Image()
+      img.onload = () => ctx.drawImage(img, 0, 0)
+      img.src = initialDataUrl
+    }
+  }, [])
+
+  function getPos(e) {
+    const rect = canvasRef.current.getBoundingClientRect()
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY
+    return {
+      x: (clientX - rect.left) * (256 / rect.width),
+      y: (clientY - rect.top) * (256 / rect.height),
+    }
+  }
+
+  function startDraw(e) { drawing.current = true; draw(e) }
+  function endDraw() { drawing.current = false }
+  function draw(e) {
+    if (!drawing.current) return
+    e.preventDefault()
+    const ctx = canvasRef.current.getContext('2d')
+    const { x, y } = getPos(e)
+    ctx.fillStyle = color
+    ctx.beginPath()
+    ctx.arc(x, y, brushSize, 0, Math.PI * 2)
+    ctx.fill()
+  }
+
+  function clearCanvas() {
+    const ctx = canvasRef.current.getContext('2d')
+    ctx.fillStyle = '#181206'
+    ctx.beginPath()
+    ctx.arc(128, 128, 126, 0, Math.PI * 2)
+    ctx.fill()
+  }
+
+  function save() {
+    onSave(canvasRef.current.toDataURL())
+    onClose()
+  }
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal max-w-xs" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h3 className="font-display text-sm text-xogun-accent">Debuxar — {label}</h3>
+          <button onClick={onClose} className="text-xogun-muted text-xl">×</button>
+        </div>
+        <div className="p-4 space-y-3">
+          <canvas ref={canvasRef} width={256} height={256}
+            className="rounded-full mx-auto touch-none cursor-crosshair border-2 border-xogun-border"
+            style={{ width: 200, height: 200 }}
+            onMouseDown={startDraw} onMouseUp={endDraw} onMouseLeave={endDraw} onMouseMove={draw}
+            onTouchStart={startDraw} onTouchEnd={endDraw} onTouchMove={draw} />
+          <div className="flex items-center justify-center gap-3">
+            <input type="color" value={color} onChange={e => setColor(e.target.value)}
+              className="w-8 h-8 rounded-lg border-2 border-xogun-border cursor-pointer p-0" />
+            <input type="range" min={2} max={20} value={brushSize} onChange={e => setBrushSize(+e.target.value)}
+              className="flex-1" style={{ accentColor: '#c8a96e' }} />
+          </div>
+          <div className="flex gap-2 justify-center">
+            <button onClick={clearCanvas} className="btn-secondary text-xs">Limpar</button>
+          </div>
+        </div>
+        <div className="modal-footer">
+          <button onClick={onClose} className="btn-secondary">Cancelar</button>
+          <button onClick={save} className="btn-primary">Gardar debuxo</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function DiceWidget() {
   const canvasRef = useRef(null)
   const threeRef = useRef(null)
@@ -26,9 +115,12 @@ export default function DiceWidget() {
     color1: '#e8c766', color2: '#8a742f', angle: 135,
     font: 'Oswald', d6pips: false, sound: true,
     history: [], rolling: false,
+    coinFaces: { cara: null, cruz: null }, // dataURL personalizadas
   })
   const [ui, setUi] = useState({ ...stateRef.current, result: null, chips: [] })
   const [histOpen, setHistOpen] = useState(false)
+  const [advancedOpen, setAdvancedOpen] = useState(false)
+  const [editingFace, setEditingFace] = useState(null) // 'cara' | 'cruz' | null
 
   const S = stateRef.current
   function sync() { setUi({ ...stateRef.current, result: ui.result, chips: ui.chips }) }
@@ -131,6 +223,13 @@ export default function DiceWidget() {
         ctx.fillRect(64 - uw / 2, y, uw, hh)
       }
       const tex = new THREE.CanvasTexture(c); tex.anisotropy = 4; return tex
+    }
+    function imageTexture(dataUrl, onReady) {
+      const tex = new THREE.Texture()
+      const img = new Image()
+      img.onload = () => { tex.image = img; tex.needsUpdate = true; onReady && onReady() }
+      img.src = dataUrl
+      return tex
     }
     function pipTexture(value, contrast) {
       const c = document.createElement('canvas'); c.width = c.height = 128
@@ -236,14 +335,19 @@ export default function DiceWidget() {
           const mat = new THREE.MeshPhongMaterial({ vertexColors: true, shininess: 80 })
           const mesh = new THREE.Mesh(geo, mat); mesh.castShadow = true; group.add(mesh)
           const contrast = pal.avg > 0.55 ? '#181206' : '#f8f3e7'
+          const custom = stateRef.current.coinFaces || {}
+
           const caraGeo = new THREE.CircleGeometry(r * 0.92, seg)
-          const caraTex = labelTexture('Cara', contrast, s.font)
+          const caraTex = custom.cara ? imageTexture(custom.cara, () => renderer.render(scene, camera)) : labelTexture('Cara', contrast, s.font)
           const caraMesh = new THREE.Mesh(caraGeo, new THREE.MeshBasicMaterial({ map: caraTex, transparent: true }))
+          caraMesh.rotation.x = -Math.PI / 2
           caraMesh.position.y = h / 2 + 0.001; group.add(caraMesh)
+
           const cruzGeo = new THREE.CircleGeometry(r * 0.92, seg)
-          const cruzTex = labelTexture('Cruz', contrast, s.font)
+          const cruzTex = custom.cruz ? imageTexture(custom.cruz, () => renderer.render(scene, camera)) : labelTexture('Cruz', contrast, s.font)
           const cruzMesh = new THREE.Mesh(cruzGeo, new THREE.MeshBasicMaterial({ map: cruzTex, transparent: true }))
-          cruzMesh.rotation.x = Math.PI; cruzMesh.position.y = -(h / 2 + 0.001); group.add(cruzMesh)
+          cruzMesh.rotation.x = Math.PI / 2; cruzMesh.position.y = -(h / 2 + 0.001); group.add(cruzMesh)
+
           const faceMeta = [
             { label: 'Cara', contrib: 1, normal: V(0, 1, 0), centroid: V(0, h / 2, 0), inradius: r * 0.7 },
             { label: 'Cruz', contrib: 0, normal: V(0, -1, 0), centroid: V(0, -h / 2, 0), inradius: r * 0.7 },
@@ -449,6 +553,17 @@ export default function DiceWidget() {
   function setMode(m) { stateRef.current.mode = m; setUi(prev => ({ ...prev, mode: m })); threeRef.current?.recolor() }
   function setFont(f) { stateRef.current.font = f; setUi(prev => ({ ...prev, font: f })); threeRef.current?.buildDice() }
   function togglePips() { stateRef.current.d6pips = !stateRef.current.d6pips; setUi(prev => ({ ...prev, d6pips: stateRef.current.d6pips })); threeRef.current?.buildDice() }
+
+  function saveCoinFace(face, dataUrl) {
+    stateRef.current.coinFaces = { ...stateRef.current.coinFaces, [face]: dataUrl }
+    setUi(prev => ({ ...prev, coinFaces: { ...stateRef.current.coinFaces } }))
+    threeRef.current?.buildDice()
+  }
+  function resetCoinFaces() {
+    stateRef.current.coinFaces = { cara: null, cruz: null }
+    setUi(prev => ({ ...prev, coinFaces: { cara: null, cruz: null } }))
+    threeRef.current?.buildDice()
+  }
   function toggleSound() { stateRef.current.sound = !stateRef.current.sound; setUi(prev => ({ ...prev, sound: stateRef.current.sound })) }
 
   return (
@@ -509,56 +624,82 @@ export default function DiceWidget() {
               {ui.d6pips ? 'Puntos' : 'Números'}
             </button>
           )}
-        </div>
-      </div>
-
-      {/* Color */}
-      <div>
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-xogun-muted text-xs font-mono uppercase tracking-wider">Cor</span>
-          <div className="flex rounded-lg overflow-hidden border border-xogun-border">
-            {['solid', 'gradient'].map(m => (
-              <button key={m} onClick={() => setMode(m)}
-                className={`px-3 py-1 text-xs font-semibold transition-colors ${ui.mode === m ? 'bg-xogun-accent text-xogun-bg' : 'bg-xogun-surface text-xogun-muted'}`}>
-                {m === 'solid' ? 'Sólida' : 'Degradado'}
+          {ui.dieType === 'coin' && (
+            <>
+              <button onClick={() => setEditingFace('cara')} className="px-2.5 py-1 rounded-lg text-xs border border-xogun-border text-xogun-muted hover:border-xogun-accent hover:text-xogun-accent transition-colors">
+                ✏️ Cara
               </button>
-            ))}
-          </div>
-        </div>
-        <div className="flex items-center gap-2 flex-wrap mb-2">
-          <input type="color" value={ui.color1} onChange={e => setColor1(e.target.value)}
-            className="w-8 h-8 rounded-lg border-2 border-xogun-border cursor-pointer p-0" style={{ appearance: 'none' }} />
-          {ui.mode === 'gradient' && <>
-            <input type="color" value={ui.color2} onChange={e => setColor2(e.target.value)}
-              className="w-8 h-8 rounded-lg border-2 border-xogun-border cursor-pointer p-0" />
-            <input type="range" min={0} max={360} value={ui.angle} onChange={e => setAngle(+e.target.value)}
-              className="flex-1 min-w-20" style={{ accentColor: '#c8a96e' }} />
-            <span className="text-xogun-muted text-xs font-mono w-8">{ui.angle}°</span>
-          </>}
-        </div>
-        <div className="flex gap-1.5 flex-wrap">
-          {(ui.mode === 'solid' ? SOLID_SWATCHES : GRADIENT_SWATCHES).map((sw, i) => {
-            const bg = ui.mode === 'solid' ? sw : `linear-gradient(${sw.angle}deg,${sw.c1},${sw.c2})`
-            const active = ui.mode === 'solid' ? ui.color1.toLowerCase() === sw : (ui.color1 === sw.c1 && ui.color2 === sw.c2)
-            return <button key={i} onClick={() => ui.mode === 'solid' ? setColor1(sw) : (setColor1(sw.c1), setColor2(sw.c2), setAngle(sw.angle))}
-              className={`w-6 h-6 rounded-lg border-2 transition-all hover:scale-110 ${active ? 'border-white' : 'border-transparent'}`}
-              style={{ background: bg }} />
-          })}
+              <button onClick={() => setEditingFace('cruz')} className="px-2.5 py-1 rounded-lg text-xs border border-xogun-border text-xogun-muted hover:border-xogun-accent hover:text-xogun-accent transition-colors">
+                ✏️ Cruz
+              </button>
+              {(ui.coinFaces?.cara || ui.coinFaces?.cruz) && (
+                <button onClick={resetCoinFaces} className="px-2.5 py-1 rounded-lg text-xs border border-xogun-border text-xogun-muted hover:border-xogun-red hover:text-xogun-red transition-colors">
+                  Restaurar
+                </button>
+              )}
+            </>
+          )}
         </div>
       </div>
 
-      {/* Font */}
-      <div>
-        <div className="text-xogun-muted text-xs font-mono uppercase tracking-wider mb-2">Tipografía</div>
-        <div className="flex gap-1.5 flex-wrap">
-          {FONTS.map(f => (
-            <button key={f.name} onClick={() => setFont(f.name)}
-              className={`px-3 py-1.5 rounded-lg text-sm transition-all border ${ui.font === f.name ? 'border-xogun-accent text-xogun-accent' : 'border-xogun-border text-xogun-muted hover:text-xogun-text'}`}
-              style={{ fontFamily: `"${f.name}", sans-serif` }}>
-              {f.label}
-            </button>
-          ))}
-        </div>
+      {/* Opcións avanzadas: cor e tipografía (estética, non esencial para o uso habitual) */}
+      <div className="border-t border-xogun-border pt-3">
+        <button onClick={() => setAdvancedOpen(a => !a)} className="text-xogun-muted text-xs font-mono uppercase tracking-wider flex items-center gap-1 hover:text-xogun-accent transition-colors">
+          Opcións avanzadas <span className={`transition-transform ${advancedOpen ? 'rotate-180' : ''}`}>▾</span>
+        </button>
+
+        {advancedOpen && (
+          <div className="space-y-5 mt-3 animate-fade-in">
+            {/* Color */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-xogun-muted text-xs font-mono uppercase tracking-wider">Cor</span>
+                <div className="flex rounded-lg overflow-hidden border border-xogun-border">
+                  {['solid', 'gradient'].map(m => (
+                    <button key={m} onClick={() => setMode(m)}
+                      className={`px-3 py-1 text-xs font-semibold transition-colors ${ui.mode === m ? 'bg-xogun-accent text-xogun-bg' : 'bg-xogun-surface text-xogun-muted'}`}>
+                      {m === 'solid' ? 'Sólida' : 'Degradado'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap mb-2">
+                <input type="color" value={ui.color1} onChange={e => setColor1(e.target.value)}
+                  className="w-8 h-8 rounded-lg border-2 border-xogun-border cursor-pointer p-0" style={{ appearance: 'none' }} />
+                {ui.mode === 'gradient' && <>
+                  <input type="color" value={ui.color2} onChange={e => setColor2(e.target.value)}
+                    className="w-8 h-8 rounded-lg border-2 border-xogun-border cursor-pointer p-0" />
+                  <input type="range" min={0} max={360} value={ui.angle} onChange={e => setAngle(+e.target.value)}
+                    className="flex-1 min-w-20" style={{ accentColor: '#c8a96e' }} />
+                  <span className="text-xogun-muted text-xs font-mono w-8">{ui.angle}°</span>
+                </>}
+              </div>
+              <div className="flex gap-1.5 flex-wrap">
+                {(ui.mode === 'solid' ? SOLID_SWATCHES : GRADIENT_SWATCHES).map((sw, i) => {
+                  const bg = ui.mode === 'solid' ? sw : `linear-gradient(${sw.angle}deg,${sw.c1},${sw.c2})`
+                  const active = ui.mode === 'solid' ? ui.color1.toLowerCase() === sw : (ui.color1 === sw.c1 && ui.color2 === sw.c2)
+                  return <button key={i} onClick={() => ui.mode === 'solid' ? setColor1(sw) : (setColor1(sw.c1), setColor2(sw.c2), setAngle(sw.angle))}
+                    className={`w-6 h-6 rounded-lg border-2 transition-all hover:scale-110 ${active ? 'border-white' : 'border-transparent'}`}
+                    style={{ background: bg }} />
+                })}
+              </div>
+            </div>
+
+            {/* Font */}
+            <div>
+              <div className="text-xogun-muted text-xs font-mono uppercase tracking-wider mb-2">Tipografía</div>
+              <div className="flex gap-1.5 flex-wrap">
+                {FONTS.map(f => (
+                  <button key={f.name} onClick={() => setFont(f.name)}
+                    className={`px-3 py-1.5 rounded-lg text-sm transition-all border ${ui.font === f.name ? 'border-xogun-accent text-xogun-accent' : 'border-xogun-border text-xogun-muted hover:text-xogun-text'}`}
+                    style={{ fontFamily: `"${f.name}", sans-serif` }}>
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* History */}
@@ -583,6 +724,15 @@ export default function DiceWidget() {
           </div>
         )}
       </div>
+
+      {editingFace && (
+        <CoinFaceEditor
+          label={editingFace === 'cara' ? 'Cara' : 'Cruz'}
+          initialDataUrl={ui.coinFaces?.[editingFace]}
+          onSave={dataUrl => saveCoinFace(editingFace, dataUrl)}
+          onClose={() => setEditingFace(null)}
+        />
+      )}
     </div>
   )
 }

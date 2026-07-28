@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { AppConfigProvider } from './contexts/AppConfigContext'
 import { ThemeProvider } from './contexts/ThemeContext'
+import { GameSessionProvider } from './contexts/GameSessionContext'
+import { MusicPlayerProvider } from './contexts/MusicPlayerContext'
 import Layout from './components/layout/Layout'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
@@ -18,6 +20,7 @@ import AdminGames from './pages/admin/AdminGames'
 import AdminAppearance from './pages/admin/AdminAppearance'
 import AdminSuggestions from './pages/admin/AdminSuggestions'
 import AdminAvatars from './pages/admin/AdminAvatars'
+import AdminPresets from './pages/admin/AdminPresets'
 
 function Splash() {
   return (
@@ -49,27 +52,32 @@ function AppRoutes() {
   const { profile } = useAuth()
   return (
     <ThemeProvider profile={profile}>
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/" element={<Layout />}>
-          <Route index element={<HomePage />} />
-          <Route path="catalogo"    element={<CatalogPage />} />
-          <Route path="ferramentas" element={<ToolsPage />} />
-          <Route path="coleccion"   element={<PrivateRoute><CollectionPage /></PrivateRoute>} />
-          <Route path="partidas"    element={<PrivateRoute><MatchesPage /></PrivateRoute>} />
-          <Route path="perfil"      element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
-          <Route path="admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
-            <Route index               element={<Navigate to="usuarios" replace />} />
-            <Route path="usuarios"     element={<AdminUsers />} />
-            <Route path="catalogo"     element={<AdminCatalog />} />
-            <Route path="xogos"        element={<AdminGames />} />
-            <Route path="suxestions"   element={<AdminSuggestions />} />
-            <Route path="avatares"     element={<AdminAvatars />} />
-            <Route path="funcions"     element={<AdminFeatures />} />
-            <Route path="aparencia"    element={<AdminAppearance />} />
-          </Route>
-        </Route>
-      </Routes>
+      <GameSessionProvider>
+        <MusicPlayerProvider>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/" element={<Layout />}>
+              <Route index element={<HomePage />} />
+              <Route path="catalogo"    element={<CatalogPage />} />
+              <Route path="ferramentas" element={<ToolsPage />} />
+              <Route path="coleccion"   element={<PrivateRoute><CollectionPage /></PrivateRoute>} />
+              <Route path="partidas"    element={<PrivateRoute><MatchesPage /></PrivateRoute>} />
+              <Route path="perfil"      element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+              <Route path="admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
+                <Route index               element={<Navigate to="usuarios" replace />} />
+                <Route path="usuarios"     element={<AdminUsers />} />
+                <Route path="catalogo"     element={<AdminCatalog />} />
+                <Route path="xogos"        element={<AdminGames />} />
+                <Route path="suxestions"   element={<AdminSuggestions />} />
+                <Route path="presets"      element={<AdminPresets />} />
+                <Route path="avatares"     element={<AdminAvatars />} />
+                <Route path="funcions"     element={<AdminFeatures />} />
+                <Route path="aparencia"    element={<AdminAppearance />} />
+              </Route>
+            </Route>
+          </Routes>
+        </MusicPlayerProvider>
+      </GameSessionProvider>
     </ThemeProvider>
   )
 }

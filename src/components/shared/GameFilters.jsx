@@ -27,27 +27,27 @@ export default function GameFilters({ filters, onChange }) {
 
       <div className="flex gap-2 flex-wrap">
         {/* Players */}
-        <input type="number" className="input w-28" placeholder="Xogadores" min={1} max={20}
+        <input type="number" className="input w-24 sm:w-28" placeholder="Xogadores" min={1} max={20}
           value={filters.players || ''} onChange={e => set('players', e.target.value)} />
 
         {/* Duration */}
-        <select className="input w-36" value={filters.maxDuration || ''}
+        <select className="input w-28 sm:w-32" value={filters.maxDuration || ''}
           onChange={e => set('maxDuration', e.target.value)}>
-          <option value="">Calquera duración</option>
+          <option value="">Duración</option>
           {DURATIONS.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
         </select>
 
         {/* Category */}
-        <select className="input w-40" value={filters.category || ''}
+        <select className="input w-28 sm:w-32" value={filters.category || ''}
           onChange={e => set('category', e.target.value)}>
-          <option value="">Todas as categorías</option>
+          <option value="">Categoría</option>
           {categories.map(c => <option key={c.id} value={c.id}>{c.emoji} {c.name}</option>)}
         </select>
 
         {/* Mechanic */}
-        <select className="input w-48" value={filters.mechanic || ''}
+        <select className="input w-28 sm:w-32" value={filters.mechanic || ''}
           onChange={e => set('mechanic', e.target.value)}>
-          <option value="">Todas as mecánicas</option>
+          <option value="">Mecánica</option>
           {mechanics.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
         </select>
 

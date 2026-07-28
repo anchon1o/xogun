@@ -7,6 +7,7 @@ import GameCard from '../components/shared/GameCard'
 import GameListRow from '../components/shared/GameListRow'
 import GameFilters from '../components/shared/GameFilters'
 import GameForm from '../components/collection/GameForm'
+import GameDetail from '../components/collection/GameDetail'
 import BggImport from '../components/collection/BggImport'
 
 export default function CatalogPage() {
@@ -15,6 +16,7 @@ export default function CatalogPage() {
   const [showForm, setShowForm]     = useState(false)
   const [showImport, setShowImport] = useState(false)
   const [editGame, setEditGame]     = useState(null)
+  const [detailGame, setDetailGame] = useState(null)
   const [view, setView]             = useState('grid') // 'grid' | 'list'
   const { games, loading, refetch } = useGames(filters)
   const { collection, addToCollection, hasGame } = useCollection(user?.id)
@@ -24,7 +26,7 @@ export default function CatalogPage() {
   function pickRandom() {
     if (!games.length) return
     const g = games[Math.floor(Math.random() * games.length)]
-    alert(`🎲 Xogo aleatorio: ${g.name}`)
+    setDetailGame(g)
   }
 
   async function handleAddToCollection(game) {
@@ -33,6 +35,7 @@ export default function CatalogPage() {
   }
 
   function handleEdit(game) {
+    setDetailGame(null)
     setEditGame(game)
     setShowForm(true)
   }
@@ -80,6 +83,7 @@ export default function CatalogPage() {
               userEntry={hasGame(game.id) ? collection.find(x => x.game_id === game.id) : null}
               onAddToCollection={handleAddToCollection}
               onEdit={handleEdit}
+              onOpenDetail={setDetailGame}
               canEdit={canEdit} />
           ))}
         </div>
@@ -90,9 +94,14 @@ export default function CatalogPage() {
               userEntry={hasGame(game.id) ? collection.find(x => x.game_id === game.id) : null}
               onAddToCollection={handleAddToCollection}
               onEdit={handleEdit}
+              onClick={setDetailGame}
               canEdit={canEdit} />
           ))}
         </div>
+      )}
+
+      {detailGame && (
+        <GameDetail game={detailGame} onClose={() => setDetailGame(null)} onEdit={handleEdit} canEdit={canEdit} />
       )}
 
       {showForm && (

@@ -1,11 +1,12 @@
 import { Outlet, NavLink } from 'react-router-dom'
-import { Users, BookOpen, Settings, Gamepad2, Palette, Shield, Smile, GitPullRequest } from 'lucide-react'
+import { Users, BookOpen, Settings, Gamepad2, Palette, Shield, Smile, GitPullRequest, Dices } from 'lucide-react'
 
 const adminNav = [
   { to: '/admin/usuarios',    icon: Users,          label: 'Usuarios' },
   { to: '/admin/catalogo',    icon: BookOpen,       label: 'Catálogo' },
   { to: '/admin/xogos',       icon: Gamepad2,       label: 'Xogos pendentes' },
   { to: '/admin/suxestions',  icon: GitPullRequest, label: 'Suxestións' },
+  { to: '/admin/presets',     icon: Dices,          label: 'Presets' },
   { to: '/admin/avatares',    icon: Smile,          label: 'Avatares' },
   { to: '/admin/funcions',    icon: Settings,       label: 'Funcionalidades' },
   { to: '/admin/aparencia',   icon: Palette,        label: 'Aparencia' },

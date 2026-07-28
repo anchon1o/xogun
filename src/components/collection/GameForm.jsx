@@ -5,6 +5,7 @@ import { useAppConfig } from '../../contexts/AppConfigContext'
 import { useCatalogMeta } from '../../hooks/useCatalogMeta'
 import { useGames } from '../../hooks/useGames'
 import { supabase } from '../../lib/supabase'
+import ImagePreview from '../shared/ImagePreview'
 
 export default function GameForm({ game, onClose, onSaved }) {
   const { user, profile } = useAuth()
@@ -21,9 +22,13 @@ export default function GameForm({ game, onClose, onSaved }) {
     max_duration: game?.max_duration || '', age: game?.age || '',
     complexity: game?.complexity || '', bgg_rating: game?.bgg_rating || '',
     bgg_id: game?.bgg_id || '', images: game?.images || [],
+    videos: game?.videos || [], rules_url: game?.rules_url || '',
     category_ids: game?.category_ids || [], mechanic_ids: game?.mechanic_ids || [],
   })
   const [newImageUrl, setNewImageUrl] = useState('')
+  const [newVideoUrl, setNewVideoUrl] = useState('')
+  const [newVideoTitle, setNewVideoTitle] = useState('')
+  const [newVideoType, setNewVideoType] = useState('tutorial')
   const [saving, setSaving]           = useState(false)
   const [error, setError]             = useState('')
   const [duplicate, setDuplicate]     = useState(null)
@@ -35,6 +40,12 @@ export default function GameForm({ game, onClose, onSaved }) {
   }
   function addImage() { if (!newImageUrl.trim()) return; setForm(f => ({ ...f, images: [...f.images, newImageUrl.trim()] })); setNewImageUrl('') }
   function removeImage(idx) { setForm(f => ({ ...f, images: f.images.filter((_, i) => i !== idx) })) }
+  function addVideo() {
+    if (!newVideoUrl.trim()) return
+    setForm(f => ({ ...f, videos: [...f.videos, { url: newVideoUrl.trim(), title: newVideoTitle.trim() || 'Vídeo', type: newVideoType }] }))
+    setNewVideoUrl(''); setNewVideoTitle('')
+  }
+  function removeVideo(idx) { setForm(f => ({ ...f, videos: f.videos.filter((_, i) => i !== idx) })) }
 
   async function handleSave() {
     if (!form.name.trim()) { setError('O nome é obrigatorio'); return }
@@ -173,17 +184,46 @@ export default function GameForm({ game, onClose, onSaved }) {
             <div className="space-y-2">
               {form.images.map((url, i) => (
                 <div key={i} className="flex gap-2 items-center">
-                  <img src={url} alt="" className="w-10 h-10 object-cover rounded" onError={e => e.target.style.display='none'} />
+                  <ImagePreview src={url} size={40} />
                   <span className="text-xs text-xogun-muted flex-1 truncate">{url}</span>
                   <button onClick={() => removeImage(i)} className="text-xogun-muted hover:text-xogun-red"><Trash2 size={13} /></button>
                 </div>
               ))}
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-center">
+                {newImageUrl.trim() && <ImagePreview src={newImageUrl.trim()} size={40} />}
                 <input className="input flex-1" placeholder="https://..." value={newImageUrl} onChange={e => setNewImageUrl(e.target.value)} onKeyDown={e => e.key==='Enter'&&addImage()} />
                 <button onClick={addImage} className="btn-secondary px-3"><Plus size={14} /></button>
               </div>
             </div>
           </div>
+
+          <div><label className="label">Manual de instrucións (URL)</label>
+            <input className="input" placeholder="https://... (PDF ou web da editorial)" value={form.rules_url} onChange={e => set('rules_url', e.target.value)} />
+          </div>
+
+          <div><label className="label">Vídeos (tutoriais, gameplays, reseñas...)</label>
+            <div className="space-y-2">
+              {form.videos.map((v, i) => (
+                <div key={i} className="flex gap-2 items-center bg-xogun-surface rounded-lg px-2 py-1.5">
+                  <span className="badge border-xogun-border text-xogun-muted text-[10px] flex-shrink-0">{v.type}</span>
+                  <span className="text-xs flex-1 truncate">{v.title}</span>
+                  <button onClick={() => removeVideo(i)} className="text-xogun-muted hover:text-xogun-red flex-shrink-0"><Trash2 size={13} /></button>
+                </div>
+              ))}
+              <div className="flex gap-2 flex-wrap">
+                <select className="input w-32 flex-shrink-0" value={newVideoType} onChange={e => setNewVideoType(e.target.value)}>
+                  <option value="tutorial">Tutorial</option>
+                  <option value="gameplay">Gameplay</option>
+                  <option value="review">Reseña</option>
+                  <option value="quick">Partida rápida</option>
+                </select>
+                <input className="input flex-1 min-w-[120px]" placeholder="Título" value={newVideoTitle} onChange={e => setNewVideoTitle(e.target.value)} />
+                <input className="input flex-1 min-w-[160px]" placeholder="URL de YouTube" value={newVideoUrl} onChange={e => setNewVideoUrl(e.target.value)} onKeyDown={e => e.key==='Enter'&&addVideo()} />
+                <button onClick={addVideo} className="btn-secondary px-3 flex-shrink-0"><Plus size={14} /></button>
+              </div>
+            </div>
+          </div>
+
           <div><label className="label">Categorías</label>
             <div className="flex flex-wrap gap-1.5">
               {categories.map(c => (

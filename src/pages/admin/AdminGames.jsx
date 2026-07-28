@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { usePendingGames } from '../../hooks/useGames'
 import { useAuth } from '../../contexts/AuthContext'
 import { supabase } from '../../lib/supabase'
@@ -6,16 +5,16 @@ import { CheckCircle, XCircle } from 'lucide-react'
 
 export default function AdminGames() {
   const { user } = useAuth()
-  const { games, loading } = usePendingGames()
+  const { games, loading, refetch } = usePendingGames()
 
   async function approve(game) {
     await supabase.from('games').update({ approved: true, approved_by: user.id, approved_at: new Date().toISOString() }).eq('id', game.id)
-    window.location.reload()
+    refetch()
   }
   async function reject(game) {
     if (!confirm(`Rexeitar e eliminar "${game.name}"?`)) return
     await supabase.from('games').delete().eq('id', game.id)
-    window.location.reload()
+    refetch()
   }
 
   return (

@@ -2,12 +2,15 @@ import { useAppConfig } from '../../contexts/AppConfigContext'
 
 /**
  * Logo compoñente reutilizable.
- * - Se hai unha URL de logo personalizado (imaxe), úsase tal cual.
- * - Se non, úsase o SVG por defecto con currentColor, que herda a cor do tema.
  *
- * Para que un SVG cambie de cor co tema, debe usar fill="currentColor"
- * nas súas paths — así herda automaticamente a cor CSS `color` do elemento pai,
- * que en Xogún normalmente será var(--xogun-accent).
+ * Prioridade de resolución:
+ *  1. URL personalizada gardada en Admin → Aparencia (config.logo_url)
+ *  2. SVG local en /brand/logo.svg (substituíble directamente por arquivo)
+ *  3. Selo SVG inline por defecto (fallback, sempre dispoñible)
+ *
+ * Para cambiar o logo definitivo, o máis sinxelo é subir unha imaxe e
+ * pegar a súa URL en Admin → Aparencia — non require volver desplegar.
+ * Alternativamente, substitúe /public/brand/logo.svg (ver /public/brand/README.md).
  */
 export default function Logo({ size = 32, className = '', color }) {
   const { config } = useAppConfig()

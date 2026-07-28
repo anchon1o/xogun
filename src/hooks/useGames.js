@@ -60,10 +60,14 @@ export function usePendingGames() {
   const [games, setGames]     = useState([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    supabase.from('games').select('*, profiles!added_by(display_name)').eq('approved', false).order('created_at')
-      .then(({ data }) => { setGames(data || []); setLoading(false) })
-  }, [])
+  useEffect(() => { fetch() }, [])
 
-  return { games, loading }
+  async function fetch() {
+    setLoading(true)
+    const { data } = await supabase.from('games').select('*, profiles!added_by(display_name)').eq('approved', false).order('created_at')
+    setGames(data || [])
+    setLoading(false)
+  }
+
+  return { games, loading, refetch: fetch }
 }

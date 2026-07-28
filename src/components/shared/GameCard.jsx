@@ -1,12 +1,13 @@
 import { Users, Clock, Star, Plus, Check, Edit2 } from 'lucide-react'
 import { useAppConfig } from '../../contexts/AppConfigContext'
 
-export default function GameCard({ game, userEntry, onAddToCollection, onEdit, canEdit, compact = false }) {
+export default function GameCard({ game, userEntry, onAddToCollection, onEdit, onOpenDetail, canEdit, compact = false }) {
   const { isFieldVisible } = useAppConfig()
   const image = game.images?.[0]
 
   return (
-    <div className="card-hover flex flex-col group animate-fade-in">
+    <div onClick={() => onOpenDetail?.(game)}
+      className="card-hover flex flex-col group animate-fade-in">
       {/* Cover */}
       <div className={`rounded-lg overflow-hidden bg-xogun-surface flex items-center justify-center mb-3 flex-shrink-0 relative ${compact ? 'h-28' : 'aspect-[4/3]'}`}>
         {image
