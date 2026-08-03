@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { useAvatars } from '../hooks/useAvatars'
 import { useCollection, COLLECTION_STATUSES, VISIBILITY_OPTIONS } from '../hooks/useCollection'
 import { useFriendships } from '../hooks/useFriendships'
+import { useAppConfig } from '../contexts/AppConfigContext'
 import { UserAvatar } from '../hooks/useAvatars'
 import { Save, Users, BookOpen, Swords } from 'lucide-react'
 
@@ -11,16 +13,13 @@ const THEME_OPTIONS = [
   { id: 'light', label: 'Claro' },
 ]
 
-const ACCENT_PRESETS = [
-  '#c8a96e','#e8c87a','#6e8dc8','#6ec87e',
-  '#c86e6e','#c86ec8','#6ec8c8','#a86ec8',
-]
-
 export default function ProfilePage() {
   const { user, profile, updateProfile } = useAuth()
   const { avatars } = useAvatars()
   const { stats } = useCollection(user?.id)
   const { friends } = useFriendships(user?.id)
+  const { config } = useAppConfig()
+  const ACCENT_PRESETS = config.accent_presets || []
 
   const [form, setForm] = useState({
     display_name:          profile?.display_name || '',
@@ -31,6 +30,7 @@ export default function ProfilePage() {
     theme:                 profile?.theme || 'dark',
     accent_color:          profile?.accent_color || '#c8a96e',
     collection_visibility: profile?.collection_visibility || 'friends',
+    notifications_enabled: profile?.notifications_enabled !== false,
   })
   const [saving, setSaving] = useState(false)
   const [saved, setSaved]   = useState(false)
@@ -53,13 +53,16 @@ export default function ProfilePage() {
         {[
           { icon: <BookOpen size={16} />, label: 'Xogos', value: stats.total },
           { icon: <Swords size={16} />, label: 'Partidas', value: stats.timesPlayed },
-          { icon: <Users size={16} />, label: 'Amigos', value: friends.length },
-        ].map(s => (
-          <div key={s.label} className="card text-center">
-            <div className="flex items-center justify-center gap-1.5 text-xogun-muted mb-1">{s.icon}<span className="text-xs">{s.label}</span></div>
-            <div className="font-display text-2xl text-xogun-accent">{s.value}</div>
-          </div>
-        ))}
+          { icon: <Users size={16} />, label: 'Amigos', value: friends.length, to: '/amigos' },
+        ].map(s => {
+          const Wrapper = s.to ? Link : 'div'
+          return (
+            <Wrapper key={s.label} to={s.to} className={`card text-center ${s.to ? 'hover:border-xogun-accent transition-colors' : ''}`}>
+              <div className="flex items-center justify-center gap-1.5 text-xogun-muted mb-1">{s.icon}<span className="text-xs">{s.label}</span></div>
+              <div className="font-display text-2xl text-xogun-accent">{s.value}</div>
+            </Wrapper>
+          )
+        })}
       </div>
 
       {/* Avatar + identidade */}
@@ -148,6 +151,17 @@ export default function ProfilePage() {
               </button>
             ))}
           </div>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div>
+            <label className="label mb-0">Notificacións</label>
+            <p className="text-xogun-muted text-xs">Solicitudes de amizade, aprobacións de suxestións e presets.</p>
+          </div>
+          <button onClick={() => set('notifications_enabled', !form.notifications_enabled)} type="button"
+            className={`relative w-12 h-7 rounded-full transition-colors flex-shrink-0 ${form.notifications_enabled ? 'bg-xogun-accent' : 'bg-xogun-border'}`}>
+            <span className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200 ${form.notifications_enabled ? 'translate-x-5' : 'translate-x-0'}`} />
+          </button>
         </div>
       </div>
 

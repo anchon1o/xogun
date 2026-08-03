@@ -69,9 +69,19 @@ export default function AdminFeatures() {
         <Toggle label="🎴 Repartidor de roles" checked={tools.role_dealer}  onChange={v => updateTool('role_dealer', v)} />
         <Toggle label="🏦 Banco de recursos"   checked={tools.resource_bank} onChange={v => updateTool('resource_bank', v)} />
         <Toggle label="🎯 Contador de obxectivos" checked={tools.objective_counter} onChange={v => updateTool('objective_counter', v)} />
+        <Toggle label="📝 Notas de partida" checked={tools.match_notes} onChange={v => updateTool('match_notes', v)} />
+        <Toggle label="👥 Xerador de equipos" checked={tools.team_generator} onChange={v => updateTool('team_generator', v)} />
+        <Toggle label="🔊 Botonera de sons" checked={tools.soundboard} onChange={v => updateTool('soundboard', v)} />
+        <Toggle label="📜 Follas de personaxe" checked={tools.character_sheet} onChange={v => updateTool('character_sheet', v)} />
         <Toggle label="🎰 Selector de xogador inicial" checked={tools.first_player} onChange={v => updateTool('first_player', v)} />
         <Toggle label="📅 Planificador de sesión" checked={tools.session_planner} onChange={v => updateTool('session_planner', v)} />
         <Toggle label="🎵 Reprodutor de música" checked={tools.music} onChange={v => updateTool('music', v)} />
+      </div>
+
+      <div className="card">
+        <h3 className="font-medium text-sm text-xogun-muted uppercase tracking-wider mb-2">Sistema</h3>
+        <Toggle label="🚧 Modo mantemento" description="Bloquea o acceso á app para usuarios non-admin, amosando unha pantalla de aviso"
+          checked={config.maintenance_mode === true} onChange={v => updateConfig('maintenance_mode', v)} />
       </div>
     </div>
   )

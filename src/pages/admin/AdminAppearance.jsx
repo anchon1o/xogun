@@ -1,16 +1,24 @@
 import { useState } from 'react'
+import { Trash2, Plus } from 'lucide-react'
 import { useAppConfig } from '../../contexts/AppConfigContext'
 import Logo from '../../components/shared/Logo'
-
-const ACCENT_PRESETS = [
-  '#c8a96e','#e8c87a','#6e8dc8','#6ec87e','#c86e6e',
-  '#c86ec8','#6ec8c8','#e87a6e','#a86ec8','#6ec8a8',
-]
 
 export default function AdminAppearance() {
   const { config, updateConfig } = useAppConfig()
   const [appName, setAppName] = useState(config.app_name || 'Xogún')
   const [logoUrl, setLogoUrl] = useState(config.logo_url || '')
+  const [newColor, setNewColor] = useState('#e8955a')
+
+  const accentPresets = config.accent_presets || []
+
+  async function addColor() {
+    if (accentPresets.includes(newColor)) return
+    await updateConfig('accent_presets', [...accentPresets, newColor])
+  }
+
+  async function removeColor(color) {
+    await updateConfig('accent_presets', accentPresets.filter(c => c !== color))
+  }
 
   async function saveName() {
     await updateConfig('app_name', appName)
@@ -66,6 +74,31 @@ export default function AdminAppearance() {
               </button>
             )}
           </div>
+        </div>
+      </div>
+
+      <div className="card space-y-4">
+        <h3 className="font-medium text-sm text-xogun-muted uppercase tracking-wider">Paleta de cores dispoñibles</h3>
+        <p className="text-xogun-muted text-xs">
+          Cores que os usuarios poden elixir como cor de acento no seu perfil.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {accentPresets.map(color => (
+            <div key={color} className="relative group">
+              <div className="w-10 h-10 rounded-lg border-2 border-xogun-border" style={{ backgroundColor: color }} />
+              <button onClick={() => removeColor(color)}
+                className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-xogun-red text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <Trash2 size={10} />
+              </button>
+            </div>
+          ))}
+        </div>
+        <div className="flex items-center gap-2">
+          <input type="color" value={newColor} onChange={e => setNewColor(e.target.value)}
+            className="w-10 h-10 rounded-lg border-2 border-xogun-border cursor-pointer p-0" />
+          <button onClick={addColor} className="btn-secondary flex items-center gap-1.5 text-xs">
+            <Plus size={12} /> Engadir cor
+          </button>
         </div>
       </div>
 

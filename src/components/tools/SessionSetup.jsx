@@ -1,14 +1,21 @@
-import { useState } from 'react'
-import { Gamepad2, Plus, X, Users } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Gamepad2, Plus, X, Users, LayoutList } from 'lucide-react'
 import { useGames } from '../../hooks/useGames'
 import { useGameSession } from '../../contexts/GameSessionContext'
+import { useToolPresets } from '../../hooks/useToolPresets'
 
 export default function SessionSetup({ onDone, onSkip }) {
   const { startSession } = useGameSession()
   const [search, setSearch] = useState('')
   const [selectedGame, setSelectedGame] = useState(null)
   const [names, setNames] = useState(['', ''])
+  const [selectedTemplateId, setSelectedTemplateId] = useState(null)
   const { games } = useGames({ search })
+  const { presets } = useToolPresets(selectedGame?.id)
+
+  const scoreTemplates = presets.filter(p => p.config?.scoreSections?.length > 0)
+
+  useEffect(() => { setSelectedTemplateId(null) }, [selectedGame?.id])
 
   function updateName(i, val) { setNames(n => n.map((x, j) => j === i ? val : x)) }
   function addSlot() { setNames(n => [...n, '']) }
@@ -17,7 +24,8 @@ export default function SessionSetup({ onDone, onSkip }) {
   function confirm() {
     const validNames = names.map(n => n.trim()).filter(Boolean)
     const finalNames = validNames.length > 0 ? validNames : ['Xogador 1', 'Xogador 2']
-    startSession(selectedGame, finalNames)
+    const template = scoreTemplates.find(t => t.id === selectedTemplateId) || null
+    startSession(selectedGame, finalNames, template)
     onDone?.()
   }
 
@@ -58,6 +66,25 @@ export default function SessionSetup({ onDone, onSkip }) {
           </>
         )}
       </div>
+
+      {/* Score template picker (only if game selected and has templates) */}
+      {selectedGame && scoreTemplates.length > 0 && (
+        <div className="mb-5">
+          <label className="label flex items-center gap-1.5"><LayoutList size={11} /> Plantilla de marcador</label>
+          <div className="space-y-1.5">
+            <button onClick={() => setSelectedTemplateId(null)}
+              className={`w-full text-left px-3 py-2 rounded-lg text-sm border transition-colors ${!selectedTemplateId ? 'border-xogun-accent text-xogun-accent bg-xogun-accent/10' : 'border-xogun-border text-xogun-muted hover:border-xogun-accent'}`}>
+              Xenérico (rondas simples)
+            </button>
+            {scoreTemplates.map(t => (
+              <button key={t.id} onClick={() => setSelectedTemplateId(t.id)}
+                className={`w-full text-left px-3 py-2 rounded-lg text-sm border transition-colors ${selectedTemplateId === t.id ? 'border-xogun-accent text-xogun-accent bg-xogun-accent/10' : 'border-xogun-border text-xogun-muted hover:border-xogun-accent'}`}>
+                {t.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Players */}
       <div className="mb-6">

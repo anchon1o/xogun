@@ -15,19 +15,22 @@ const PLAYER_COLORS = ['#c8a96e', '#6e8dc8', '#6ec87e', '#c86e6e', '#c86ec8', '#
 export function GameSessionProvider({ children }) {
   const [game, setGame] = useState(null)
   const [players, setPlayers] = useState([])
+  const [scoreTemplate, setScoreTemplate] = useState(null)
 
-  const startSession = useCallback((gameData, playerNames) => {
+  const startSession = useCallback((gameData, playerNames, template = null) => {
     setGame(gameData || null)
     setPlayers(playerNames.map((name, i) => ({
       id: crypto.randomUUID(),
       name,
       color: PLAYER_COLORS[i % PLAYER_COLORS.length],
     })))
+    setScoreTemplate(template)
   }, [])
 
   const clearSession = useCallback(() => {
     setGame(null)
     setPlayers([])
+    setScoreTemplate(null)
   }, [])
 
   const updatePlayer = useCallback((id, updates) => {
@@ -46,7 +49,7 @@ export function GameSessionProvider({ children }) {
 
   return (
     <GameSessionContext.Provider value={{
-      game, players, hasActiveSession,
+      game, players, hasActiveSession, scoreTemplate,
       startSession, clearSession, updatePlayer, addPlayer, removePlayer,
     }}>
       {children}

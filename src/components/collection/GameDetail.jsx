@@ -1,5 +1,9 @@
+import { useState } from 'react'
 import { X, Users, Clock, Star, ExternalLink, Youtube, FileText, Edit2 } from 'lucide-react'
 import { useCatalogMeta } from '../../hooks/useCatalogMeta'
+import { useGameRating } from '../../hooks/useGameRating'
+import { useCollection } from '../../hooks/useCollection'
+import { useAuth } from '../../contexts/AuthContext'
 import ImagePreview from '../shared/ImagePreview'
 
 const VIDEO_TYPE_LABELS = {
@@ -16,7 +20,22 @@ function getYouTubeThumbnail(url) {
 
 export default function GameDetail({ game, onClose, onEdit, canEdit }) {
   const { categories, mechanics } = useCatalogMeta()
+  const { user } = useAuth()
+  const { avg: communityAvg, count: ratingCount, refetch: refetchRating } = useGameRating(game?.id)
+  const { getEntry, hasGame, updateEntry } = useCollection(user?.id)
+  const [hoverRating, setHoverRating] = useState(0)
+
   if (!game) return null
+
+  const myEntry = hasGame(game.id) ? getEntry(game.id) : null
+  const myRating = myEntry?.personal_rating || 0
+
+  async function setRating(value) {
+    if (!user) { alert('Necesitas iniciar sesión para puntuar xogos'); return }
+    if (!myEntry) { alert('Engade primeiro este xogo á túa colección para puntualo'); return }
+    await updateEntry(game.id, { personal_rating: value })
+    refetchRating()
+  }
 
   const gameCategories = (game.category_ids || []).map(id => categories.find(c => c.id === id)).filter(Boolean)
   const gameMechanics = (game.mechanic_ids || []).map(id => mechanics.find(m => m.id === id)).filter(Boolean)
@@ -74,6 +93,46 @@ export default function GameDetail({ game, onClose, onEdit, canEdit }) {
           {game.description && (
             <p className="text-sm text-xogun-text leading-relaxed">{game.description}</p>
           )}
+
+          {/* Puntuacións */}
+          <div className="card flex flex-wrap items-center gap-5">
+            {game.bgg_rating && (
+              <div className="text-center">
+                <p className="text-xogun-muted text-[10px] uppercase tracking-wider mb-0.5">BGG</p>
+                <p className="font-display text-lg text-xogun-text flex items-center gap-1 justify-center">
+                  <Star size={13} className="text-xogun-muted" />{Number(game.bgg_rating).toFixed(1)}
+                </p>
+              </div>
+            )}
+            <div className="text-center">
+              <p className="text-xogun-muted text-[10px] uppercase tracking-wider mb-0.5">Comunidade Xogún</p>
+              <p className="font-display text-lg text-xogun-accent flex items-center gap-1 justify-center">
+                {communityAvg ? <><Star size={13} />{communityAvg}</> : <span className="text-xogun-muted text-sm">—</span>}
+              </p>
+              {ratingCount > 0 && <p className="text-xogun-muted text-[10px]">{ratingCount} valoración{ratingCount !== 1 ? 's' : ''}</p>}
+            </div>
+            <div className="flex-1 min-w-[140px]">
+              <p className="text-xogun-muted text-[10px] uppercase tracking-wider mb-1">A miña valoración</p>
+              {user ? (
+                <div className="flex gap-0.5">
+                  {Array.from({ length: 10 }, (_, i) => i + 1).map(v => (
+                    <button key={v} onClick={() => setRating(v)}
+                      onMouseEnter={() => setHoverRating(v)} onMouseLeave={() => setHoverRating(0)}
+                      className="transition-transform hover:scale-110">
+                      <Star size={16}
+                        className={(hoverRating || myRating) >= v ? 'text-xogun-accent' : 'text-xogun-border'}
+                        fill={(hoverRating || myRating) >= v ? 'currentColor' : 'none'} />
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xogun-muted text-xs">Inicia sesión para puntuar</p>
+              )}
+              {user && !myEntry && (
+                <p className="text-xogun-muted text-[10px] mt-1">Engade o xogo á túa colección para poder puntualo</p>
+              )}
+            </div>
+          </div>
 
           {/* Categorías e mecánicas */}
           {(gameCategories.length > 0 || gameMechanics.length > 0) && (

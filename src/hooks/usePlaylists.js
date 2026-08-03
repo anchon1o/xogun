@@ -94,3 +94,26 @@ export async function getYouTubeTitle(url) {
     return data.title || null
   } catch { return null }
 }
+
+/**
+ * Convirte unha URL normal de Spotify (open.spotify.com/playlist/... ou /album/... ou /track/...)
+ * na súa versión embebible (open.spotify.com/embed/...).
+ */
+export function toSpotifyEmbedUrl(url) {
+  const match = url.match(/open\.spotify\.com\/(playlist|album|track|artist)\/([a-zA-Z0-9]+)/)
+  if (!match) return null
+  return `https://open.spotify.com/embed/${match[1]}/${match[2]}`
+}
+
+/**
+ * Convirte unha URL de Archive.org (archive.org/details/...) na súa versión embebible.
+ */
+export function toArchiveEmbedUrl(url) {
+  const match = url.match(/archive\.org\/details\/([^/?#]+)/)
+  if (!match) return null
+  return `https://archive.org/embed/${match[1]}`
+}
+
+export function isValidEmbedUrl(url) {
+  return /^https:\/\//.test(url)
+}

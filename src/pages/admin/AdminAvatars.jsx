@@ -80,7 +80,12 @@ export default function AdminAvatars() {
               <div><label className="label">SVG (código completo)</label>
                 <textarea className="input font-mono text-xs" rows={6} value={form.svg}
                   onChange={e => setForm(f=>({...f,svg:e.target.value}))}
-                  placeholder='<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">...</svg>' /></div>
+                  placeholder='<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">...</svg>' />
+                <p className="text-xogun-muted text-[11px] mt-1">
+                  Usa <code className="text-xogun-accent">fill="currentColor"</code> nas formas principais
+                  para que o avatar herde a cor elixida por cada usuario.
+                </p>
+              </div>
               {form.svg && (
                 <div>
                   <label className="label">Vista previa</label>

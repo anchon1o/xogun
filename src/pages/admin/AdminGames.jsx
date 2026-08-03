@@ -1,6 +1,8 @@
 import { usePendingGames } from '../../hooks/useGames'
 import { useAuth } from '../../contexts/AuthContext'
 import { supabase } from '../../lib/supabase'
+import { notifyUser } from '../../hooks/useNotifications'
+import { logActivity } from '../../hooks/useActivityLog'
 import { CheckCircle, XCircle } from 'lucide-react'
 
 export default function AdminGames() {
@@ -9,10 +11,27 @@ export default function AdminGames() {
 
   async function approve(game) {
     await supabase.from('games').update({ approved: true, approved_by: user.id, approved_at: new Date().toISOString() }).eq('id', game.id)
+    logActivity(user.id, { action: 'game_approved', targetType: 'game', targetName: game.name })
+    if (game.added_by) {
+      notifyUser(game.added_by, {
+        type: 'game_approved',
+        title: 'Xogo aprobado',
+        body: `"${game.name}" xa está dispoñible no catálogo`,
+        link: '/catalogo',
+      })
+    }
     refetch()
   }
   async function reject(game) {
     if (!confirm(`Rexeitar e eliminar "${game.name}"?`)) return
+    logActivity(user.id, { action: 'game_rejected', targetType: 'game', targetName: game.name })
+    if (game.added_by) {
+      notifyUser(game.added_by, {
+        type: 'game_approved',
+        title: 'Xogo rexeitado',
+        body: `"${game.name}" non foi aprobado para o catálogo`,
+      })
+    }
     await supabase.from('games').delete().eq('id', game.id)
     refetch()
   }

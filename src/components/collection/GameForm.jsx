@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { X, Plus, Trash2 } from 'lucide-react'
+import { X, Plus, Trash2, Search } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useAppConfig } from '../../contexts/AppConfigContext'
 import { useCatalogMeta } from '../../hooks/useCatalogMeta'
@@ -262,6 +262,13 @@ export default function GameForm({ game, onClose, onSaved }) {
               ))}
               <div className="flex gap-2 items-center">
                 {newImageUrl.trim() && <ImagePreview src={newImageUrl.trim()} size={40} />}
+                {form.name.trim() && (
+                  <a href={`https://www.google.com/search?q=${encodeURIComponent(form.name.trim() + ' xogo de mesa')}&tbm=isch`}
+                    target="_blank" rel="noopener noreferrer"
+                    className="btn-secondary px-3 flex-shrink-0" title="Buscar imaxe en Google">
+                    <Search size={14} />
+                  </a>
+                )}
                 <input className="input flex-1" placeholder="https://..." value={newImageUrl} onChange={e => setNewImageUrl(e.target.value)} onKeyDown={e => e.key==='Enter'&&addImage()} />
                 <button onClick={addImage} className="btn-secondary px-3"><Plus size={14} /></button>
               </div>

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
+import { notifyUser } from '../../hooks/useNotifications'
+import { logActivity } from '../../hooks/useActivityLog'
 import { CheckCircle, XCircle } from 'lucide-react'
 
 export default function AdminSuggestions() {
@@ -21,13 +23,27 @@ export default function AdminSuggestions() {
     setLoading(false)
   }
 
-  async function resolve(id, status, gameId, field, newValue) {
+  async function resolve(suggestion, status) {
+    const { id, game_id: gameId, field, new_value: newValue, suggested_by } = suggestion
     await supabase.from('game_edit_suggestions')
       .update({ status, reviewed_by: user.id, reviewed_at: new Date().toISOString() })
       .eq('id', id)
     if (status === 'approved') {
       const update = { [field]: newValue }
       await supabase.from('games').update(update).eq('id', gameId)
+    }
+    logActivity(user.id, {
+      action: status === 'approved' ? 'suggestion_approved' : 'suggestion_rejected',
+      targetType: 'suggestion',
+      targetName: `${suggestion.games?.name || 'xogo'} · ${field}`,
+    })
+    if (suggested_by) {
+      notifyUser(suggested_by, {
+        type: 'suggestion_approved',
+        title: status === 'approved' ? 'Suxestión aprobada' : 'Suxestión rexeitada',
+        body: `A túa suxestión para "${suggestion.games?.name}" foi ${status === 'approved' ? 'aprobada' : 'rexeitada'}`,
+        link: '/catalogo',
+      })
     }
     fetch()
   }
@@ -46,11 +62,11 @@ export default function AdminSuggestions() {
                     <p className="text-xogun-muted text-xs">Campo: <span className="text-xogun-accent">{s.field}</span> · Por: {s.profiles?.display_name || 'Anónimo'}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button onClick={() => resolve(s.id, 'approved', s.game_id, s.field, s.new_value)}
+                    <button onClick={() => resolve(s, 'approved')}
                       className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg border border-green-500/30 text-green-400 hover:bg-green-500/10 transition-colors">
                       <CheckCircle size={13} /> Aprobar
                     </button>
-                    <button onClick={() => resolve(s.id, 'rejected', s.game_id, s.field, s.new_value)}
+                    <button onClick={() => resolve(s, 'rejected')}
                       className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg border border-xogun-red/30 text-xogun-red hover:bg-xogun-red/10 transition-colors">
                       <XCircle size={13} /> Rexeitar
                     </button>

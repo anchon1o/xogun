@@ -8,7 +8,16 @@ import ScoreWidget from '../components/tools/ScoreWidget'
 import TimerWidget from '../components/tools/TimerWidget'
 import TurnWidget from '../components/tools/TurnWidget'
 import MusicWidget from '../components/tools/MusicWidget'
+import FirstPlayerWidget from '../components/tools/FirstPlayerWidget'
+import ResourceBankWidget from '../components/tools/ResourceBankWidget'
+import ObjectiveCounterWidget from '../components/tools/ObjectiveCounterWidget'
+import MatchNotesWidget from '../components/tools/MatchNotesWidget'
+import TeamGeneratorWidget from '../components/tools/TeamGeneratorWidget'
+import RoleDealerWidget from '../components/tools/RoleDealerWidget'
+import SoundboardWidget from '../components/tools/SoundboardWidget'
+import CharacterSheetWidget from '../components/tools/CharacterSheetWidget'
 import SessionSetup from '../components/tools/SessionSetup'
+import FullscreenButton from '../components/shared/FullscreenButton'
 import { Gamepad2, X, ChevronDown, Users, Save, Bookmark } from 'lucide-react'
 
 const ALL_WIDGETS = [
@@ -17,6 +26,14 @@ const ALL_WIDGETS = [
   { id: 'timer',      label: 'Temporizador', emoji: '⏱️', component: TimerWidget },
   { id: 'turns',      label: 'Turnos',       emoji: '🔄', component: TurnWidget },
   { id: 'music',      label: 'Música',       emoji: '🎵', component: MusicWidget },
+  { id: 'soundboard', label: 'Sons',         emoji: '🔊', component: SoundboardWidget },
+  { id: 'resource_bank',      label: 'Banco de recursos', emoji: '🏦', component: ResourceBankWidget },
+  { id: 'objective_counter',  label: 'Obxectivos',        emoji: '✅', component: ObjectiveCounterWidget },
+  { id: 'match_notes',        label: 'Notas',             emoji: '📝', component: MatchNotesWidget },
+  { id: 'team_generator',     label: 'Equipos',           emoji: '👥', component: TeamGeneratorWidget },
+  { id: 'role_dealer',        label: 'Roles',             emoji: '🎴', component: RoleDealerWidget },
+  { id: 'character_sheet',    label: 'Personaxes',        emoji: '📜', component: CharacterSheetWidget },
+  { id: 'first_player', label: 'Xogador inicial', emoji: '🎯', component: FirstPlayerWidget },
 ]
 
 // Breakpoints: móbil (<768), táboa/iPad vertical (768–1100 en columna única), escritorio (>1100 en grid)
@@ -62,6 +79,7 @@ function TabbedView({ widgets, allWidgets, activeIds, onToggle, tall }) {
   const [active, setActive] = useState(0)
   const [showConfig, setShowConfig] = useState(false)
   const startX = useRef(null)
+  const containerRef = useRef(null)
 
   useEffect(() => { if (active >= widgets.length) setActive(0) }, [widgets.length])
 
@@ -78,7 +96,7 @@ function TabbedView({ widgets, allWidgets, activeIds, onToggle, tall }) {
   const ActiveComponent = widgets[active]?.component
 
   return (
-    <div className={`flex flex-col ${tall ? '' : 'rounded-2xl border border-xogun-border overflow-hidden'}`}
+    <div ref={containerRef} className={`flex flex-col bg-xogun-bg ${tall ? '' : 'rounded-2xl border border-xogun-border overflow-hidden'}`}
       style={tall ? { height: 'calc(100vh - 3.5rem)' } : {}}>
       <div className="flex items-center bg-xogun-surface border-b border-xogun-border">
         <div className="flex flex-1 overflow-x-auto">
@@ -91,6 +109,7 @@ function TabbedView({ widgets, allWidgets, activeIds, onToggle, tall }) {
             </button>
           ))}
         </div>
+        <FullscreenButton containerRef={containerRef} className="px-2 py-2.5 flex-shrink-0" />
         <button onClick={() => setShowConfig(true)} className="px-3 py-2.5 text-xogun-muted flex-shrink-0">
           <ChevronDown size={16} />
         </button>
@@ -130,6 +149,23 @@ function TabbedView({ widgets, allWidgets, activeIds, onToggle, tall }) {
   )
 }
 
+function WidgetCard({ w, onToggle }) {
+  const containerRef = useRef(null)
+  const Component = w.component
+  return (
+    <div ref={containerRef} className="bg-xogun-card border border-xogun-border rounded-2xl overflow-hidden flex flex-col">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-xogun-border bg-xogun-card">
+        <span className="font-display text-sm text-xogun-accent">{w.emoji} {w.label}</span>
+        <div className="flex items-center gap-2">
+          <FullscreenButton containerRef={containerRef} />
+          <button onClick={() => onToggle(w.id)} className="text-xogun-muted hover:text-xogun-red transition-colors text-lg leading-none">×</button>
+        </div>
+      </div>
+      <div className="p-4 flex-1 overflow-auto bg-xogun-card"><Component /></div>
+    </div>
+  )
+}
+
 function GridView({ widgets, allWidgets, activeIds, onToggle }) {
   return (
     <div>
@@ -145,18 +181,7 @@ function GridView({ widgets, allWidgets, activeIds, onToggle }) {
         <p className="text-xogun-muted text-sm text-center py-10">Selecciona polo menos unha ferramenta arriba.</p>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          {widgets.map(w => {
-            const Component = w.component
-            return (
-              <div key={w.id} className="bg-xogun-card border border-xogun-border rounded-2xl overflow-hidden flex flex-col">
-                <div className="flex items-center justify-between px-4 py-3 border-b border-xogun-border">
-                  <span className="font-display text-sm text-xogun-accent">{w.emoji} {w.label}</span>
-                  <button onClick={() => onToggle(w.id)} className="text-xogun-muted hover:text-xogun-red transition-colors text-lg leading-none">×</button>
-                </div>
-                <div className="p-4 flex-1 overflow-hidden"><Component /></div>
-              </div>
-            )
-          })}
+          {widgets.map(w => <WidgetCard key={w.id} w={w} onToggle={onToggle} />)}
         </div>
       )}
     </div>

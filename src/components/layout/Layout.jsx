@@ -2,9 +2,10 @@ import { useState } from 'react'
 import { Outlet, NavLink, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { useAppConfig } from '../../contexts/AppConfigContext'
-import { Library, Wrench, Shield, LogOut, LogIn, Swords, User, Menu, X, ChevronDown } from 'lucide-react'
+import { Library, Wrench, Shield, LogOut, LogIn, Swords, User, UsersRound, TrendingUp, Calendar as CalendarIcon, Menu, X, ChevronDown } from 'lucide-react'
 import { UserAvatar } from '../../hooks/useAvatars'
 import Logo from '../shared/Logo'
+import NotificationBell from './NotificationBell'
 
 export default function Layout() {
   const { user, profile, signOut } = useAuth()
@@ -48,6 +49,9 @@ export default function Layout() {
           </nav>
 
           <div className="ml-auto flex items-center gap-2">
+            {user && profile?.notifications_enabled !== false && (
+              <NotificationBell userId={user.id} />
+            )}
             {user ? (
               <div className="relative">
                 <button onClick={() => setUserMenuOpen(o => !o)}
@@ -63,6 +67,22 @@ export default function Layout() {
                     <NavLink to="/perfil" onClick={() => setUserMenuOpen(false)}
                       className="flex items-center gap-2 px-3 py-2 text-sm text-xogun-muted hover:text-xogun-text hover:bg-xogun-surface transition-colors">
                       <User size={13} /> O meu perfil
+                    </NavLink>
+                    <NavLink to="/amigos" onClick={() => setUserMenuOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 text-sm text-xogun-muted hover:text-xogun-text hover:bg-xogun-surface transition-colors">
+                      <UsersRound size={13} /> Amigos
+                    </NavLink>
+                    <NavLink to="/estatisticas" onClick={() => setUserMenuOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 text-sm text-xogun-muted hover:text-xogun-text hover:bg-xogun-surface transition-colors">
+                      <TrendingUp size={13} /> Estatísticas
+                    </NavLink>
+                    <NavLink to="/retos" onClick={() => setUserMenuOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 text-sm text-xogun-muted hover:text-xogun-text hover:bg-xogun-surface transition-colors">
+                      <Swords size={13} /> Retos
+                    </NavLink>
+                    <NavLink to="/calendario" onClick={() => setUserMenuOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 text-sm text-xogun-muted hover:text-xogun-text hover:bg-xogun-surface transition-colors">
+                      <CalendarIcon size={13} /> Calendario
                     </NavLink>
                     {profile?.is_admin && (
                       <NavLink to="/admin" onClick={() => setUserMenuOpen(false)}

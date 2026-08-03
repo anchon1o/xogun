@@ -5,6 +5,7 @@ const AppConfigContext = createContext(null)
 
 const DEFAULTS = {
   app_name: 'Xogún',
+  maintenance_mode: false,
   logo_url: null,
   features: {
     tools_public: true,
@@ -28,8 +29,13 @@ const DEFAULTS = {
   tools_enabled: {
     dice: true, scoreboard: true, timer: true, turns: true,
     role_dealer: true, resource_bank: true, objective_counter: true,
-    first_player: true, session_planner: true,
+    first_player: true, session_planner: true, music: true,
+    match_notes: true, team_generator: true, soundboard: true, character_sheet: true,
   },
+  accent_presets: [
+    '#c8a96e', '#e8c87a', '#e8955a', '#6e8dc8',
+    '#6ec87e', '#c86e6e', '#c86ec8', '#6ec8c8',
+  ],
 }
 
 export function AppConfigProvider({ children }) {
