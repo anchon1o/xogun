@@ -17,6 +17,7 @@ WHERE ug.user_id = p.id AND ug.visibility IS NULL;
 
 -- Actualizar a política de SELECT para usar a visibilidade por entrada
 DROP POLICY IF EXISTS "ver coleccións segundo visibilidade" ON user_games;
+DROP POLICY IF EXISTS "ver entradas segundo a súa propia visibilidade" ON user_games;
 CREATE POLICY "ver entradas segundo a súa propia visibilidade"
   ON user_games FOR SELECT USING (
     auth.uid() = user_id OR
@@ -47,6 +48,7 @@ CREATE TABLE IF NOT EXISTS game_lists (
 
 ALTER TABLE game_lists ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "ver listas segundo visibilidade" ON game_lists;
 CREATE POLICY "ver listas segundo visibilidade"
   ON game_lists FOR SELECT USING (
     auth.uid() = user_id OR
@@ -58,6 +60,7 @@ CREATE POLICY "ver listas segundo visibilidade"
     ))
   );
 
+DROP POLICY IF EXISTS "usuario xestiona as súas listas" ON game_lists;
 CREATE POLICY "usuario xestiona as súas listas"
   ON game_lists FOR ALL USING (auth.uid() = user_id);
 
@@ -77,6 +80,7 @@ CREATE TABLE IF NOT EXISTS game_list_items (
 
 ALTER TABLE game_list_items ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "ver elementos coa lista" ON game_list_items;
 CREATE POLICY "ver elementos coa lista"
   ON game_list_items FOR SELECT USING (
     EXISTS (
@@ -92,6 +96,7 @@ CREATE POLICY "ver elementos coa lista"
     )
   );
 
+DROP POLICY IF EXISTS "propietario da lista xestiona elementos" ON game_list_items;
 CREATE POLICY "propietario da lista xestiona elementos"
   ON game_list_items FOR ALL USING (
     EXISTS (SELECT 1 FROM game_lists l WHERE l.id = list_id AND l.user_id = auth.uid())
