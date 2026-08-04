@@ -84,6 +84,10 @@ export default function Layout() {
                       className="flex items-center gap-2 px-3 py-2 text-sm text-xogun-muted hover:text-xogun-text hover:bg-xogun-surface transition-colors">
                       <CalendarIcon size={13} /> Calendario
                     </NavLink>
+                    <NavLink to="/social" onClick={() => setUserMenuOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 text-sm text-xogun-muted hover:text-xogun-text hover:bg-xogun-surface transition-colors">
+                      <span className="w-[13px] text-center flex-shrink-0">🐺</span> Xogo social
+                    </NavLink>
                     {profile?.is_admin && (
                       <NavLink to="/admin" onClick={() => setUserMenuOpen(false)}
                         className="flex items-center gap-2 px-3 py-2 text-sm text-xogun-muted hover:text-xogun-accent hover:bg-xogun-surface transition-colors">

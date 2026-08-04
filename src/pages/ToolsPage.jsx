@@ -16,6 +16,7 @@ import TeamGeneratorWidget from '../components/tools/TeamGeneratorWidget'
 import RoleDealerWidget from '../components/tools/RoleDealerWidget'
 import SoundboardWidget from '../components/tools/SoundboardWidget'
 import CharacterSheetWidget from '../components/tools/CharacterSheetWidget'
+import SocialGameLauncherWidget from '../components/tools/SocialGameLauncherWidget'
 import SessionSetup from '../components/tools/SessionSetup'
 import FullscreenButton from '../components/shared/FullscreenButton'
 import { Gamepad2, X, ChevronDown, Users, Save, Bookmark } from 'lucide-react'
@@ -33,6 +34,7 @@ const ALL_WIDGETS = [
   { id: 'team_generator',     label: 'Equipos',           emoji: '👥', component: TeamGeneratorWidget },
   { id: 'role_dealer',        label: 'Roles',             emoji: '🎴', component: RoleDealerWidget },
   { id: 'character_sheet',    label: 'Personaxes',        emoji: '📜', component: CharacterSheetWidget },
+  { id: 'social_game_launcher', label: 'Xogo social',     emoji: '🐺', component: SocialGameLauncherWidget },
   { id: 'first_player', label: 'Xogador inicial', emoji: '🎯', component: FirstPlayerWidget },
 ]
 

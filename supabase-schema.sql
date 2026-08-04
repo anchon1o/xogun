@@ -157,7 +157,7 @@ INSERT INTO app_config (key, value) VALUES
     "dice": true, "scoreboard": true, "timer": true, "turns": true,
     "role_dealer": true, "resource_bank": true, "objective_counter": true,
     "first_player": true, "session_planner": true, "music": true,
-    "match_notes": true, "team_generator": true, "soundboard": true, "character_sheet": true
+    "match_notes": true, "team_generator": true, "soundboard": true, "character_sheet": true, "social_game_launcher": true
   }');
 
 
@@ -550,6 +550,159 @@ CREATE POLICY "usuario xestiona os seus personaxes"
   ON characters FOR ALL USING (auth.uid() = user_id);
 
 CREATE INDEX characters_user ON characters(user_id);
+
+
+-- ── 9j. SOCIAL GAMES (reparto secreto multidispositivo: Lobo, Mafia...) ──
+-- Cada xogador reclama a súa praza dende o SEU propio móbil e o rol
+-- gárdase nunha táboa separada e illada por RLS, de xeito que nin sequera
+-- o anfitrión pode ver os roles despois de repartilos — só quen os reclamou.
+CREATE TABLE social_games (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  code        TEXT UNIQUE NOT NULL,
+  name        TEXT,
+  preset      TEXT DEFAULT 'custom',
+  role_pool   JSONB NOT NULL DEFAULT '[]',   -- array de nomes de rol, ex: ["Lobo","Lobo","Aldeán",...]
+  status      TEXT DEFAULT 'lobby',           -- 'lobby'|'dealt'|'finished'
+  created_by  UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE social_games ENABLE ROW LEVEL SECURITY;
+-- Nota de deseño: a busca por código require que calquera usuario autenticado
+-- poida ler a fila da partida (o código en si é o control de acceso, como un
+-- PIN de sala). O contido exposto (nome, preset, lista de roles posibles) non
+-- é sensible — o que si está estritamente illado son os roles xa asignados
+-- (táboa social_game_roles, máis abaixo).
+CREATE POLICY "calquera autenticado busca partidas por código"
+  ON social_games FOR SELECT USING (auth.uid() IS NOT NULL);
+CREATE POLICY "crear partida propia"
+  ON social_games FOR INSERT WITH CHECK (auth.uid() = created_by);
+CREATE POLICY "anfitrión actualiza a súa partida"
+  ON social_games FOR UPDATE USING (auth.uid() = created_by) WITH CHECK (auth.uid() = created_by);
+CREATE POLICY "anfitrión elimina a súa partida"
+  ON social_games FOR DELETE USING (auth.uid() = created_by);
+
+CREATE INDEX social_games_code ON social_games(code);
+
+
+CREATE TABLE social_game_players (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  game_id     UUID NOT NULL REFERENCES social_games(id) ON DELETE CASCADE,
+  name        TEXT NOT NULL,
+  claimed_by  UUID REFERENCES profiles(id) ON DELETE SET NULL,
+  eliminated  BOOLEAN DEFAULT false,
+  seat_order  INT DEFAULT 0,
+  created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE social_game_players ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "ver prazas de xogadores"
+  ON social_game_players FOR SELECT USING (auth.uid() IS NOT NULL);
+CREATE POLICY "anfitrión crea prazas"
+  ON social_game_players FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM social_games g WHERE g.id = game_id AND g.created_by = auth.uid())
+  );
+CREATE POLICY "reclamar praza libre ou anfitrión xestiona"
+  ON social_game_players FOR UPDATE USING (
+    claimed_by IS NULL OR claimed_by = auth.uid() OR
+    EXISTS (SELECT 1 FROM social_games g WHERE g.id = game_id AND g.created_by = auth.uid())
+  ) WITH CHECK (
+    claimed_by = auth.uid() OR claimed_by IS NULL OR
+    EXISTS (SELECT 1 FROM social_games g WHERE g.id = game_id AND g.created_by = auth.uid())
+  );
+CREATE POLICY "anfitrión elimina prazas"
+  ON social_game_players FOR DELETE USING (
+    EXISTS (SELECT 1 FROM social_games g WHERE g.id = game_id AND g.created_by = auth.uid())
+  );
+
+-- Un mesmo usuario non pode reclamar dúas prazas na mesma partida
+CREATE UNIQUE INDEX social_players_one_slot ON social_game_players(game_id, claimed_by) WHERE claimed_by IS NOT NULL;
+CREATE INDEX social_game_players_game ON social_game_players(game_id);
+
+
+CREATE TABLE social_game_roles (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  game_id     UUID NOT NULL REFERENCES social_games(id) ON DELETE CASCADE,
+  player_id   UUID NOT NULL UNIQUE REFERENCES social_game_players(id) ON DELETE CASCADE,
+  role_name   TEXT NOT NULL,
+  created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE social_game_roles ENABLE ROW LEVEL SECURITY;
+-- Illamento estrito: só quen reclamou esa praza pode ver o seu propio rol.
+CREATE POLICY "só o propio xogador ve o seu rol"
+  ON social_game_roles FOR SELECT USING (
+    EXISTS (SELECT 1 FROM social_game_players p WHERE p.id = player_id AND p.claimed_by = auth.uid())
+  );
+CREATE POLICY "anfitrión crea roles ao repartir"
+  ON social_game_roles FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM social_games g WHERE g.id = game_id AND g.created_by = auth.uid())
+  );
+CREATE POLICY "anfitrión pode repartir de novo"
+  ON social_game_roles FOR DELETE USING (
+    EXISTS (SELECT 1 FROM social_games g WHERE g.id = game_id AND g.created_by = auth.uid())
+  );
+
+CREATE INDEX social_game_roles_game ON social_game_roles(game_id);
+
+-- Fase de xogo (día/noite/votación) e temporizador compartido entre dispositivos
+ALTER TABLE social_games ADD COLUMN phase TEXT DEFAULT 'none';           -- 'none'|'day'|'night'|'voting'|'results'
+ALTER TABLE social_games ADD COLUMN phase_ends_at TIMESTAMPTZ;            -- fin previsto da fase (cada móbil calcula o restante)
+ALTER TABLE social_games ADD COLUMN voting_round INT DEFAULT 0;
+
+
+-- ── 9k. SOCIAL GAME VOTES (votación secreta, reconto público) ──
+-- Ninguén (nin sequera outros xogadores) pode ver por quen votou outra
+-- persoa — só o propio anfitrión (para resolver empates) e cada un o seu
+-- propio voto. O reconto agregado sérvese a través dunha función SQL
+-- (social_vote_tally) que devolve só totais, nunca identidades.
+CREATE TABLE social_game_votes (
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  game_id           UUID NOT NULL REFERENCES social_games(id) ON DELETE CASCADE,
+  voter_player_id   UUID NOT NULL REFERENCES social_game_players(id) ON DELETE CASCADE,
+  target_player_id  UUID REFERENCES social_game_players(id) ON DELETE CASCADE, -- NULL = voto en branco
+  round             INT NOT NULL DEFAULT 1,
+  created_at        TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (game_id, voter_player_id, round)
+);
+
+ALTER TABLE social_game_votes ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "ver só o propio voto ou anfitrión ve todos"
+  ON social_game_votes FOR SELECT USING (
+    EXISTS (SELECT 1 FROM social_game_players p WHERE p.id = voter_player_id AND p.claimed_by = auth.uid())
+    OR EXISTS (SELECT 1 FROM social_games g WHERE g.id = game_id AND g.created_by = auth.uid())
+  );
+CREATE POLICY "votar como un mesmo"
+  ON social_game_votes FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM social_game_players p WHERE p.id = voter_player_id AND p.claimed_by = auth.uid())
+  );
+CREATE POLICY "cambiar o propio voto"
+  ON social_game_votes FOR UPDATE USING (
+    EXISTS (SELECT 1 FROM social_game_players p WHERE p.id = voter_player_id AND p.claimed_by = auth.uid())
+  );
+CREATE POLICY "anfitrión limpa votos ao abrir nova rolda"
+  ON social_game_votes FOR DELETE USING (
+    EXISTS (SELECT 1 FROM social_games g WHERE g.id = game_id AND g.created_by = auth.uid())
+  );
+
+CREATE INDEX social_game_votes_game ON social_game_votes(game_id, round);
+
+-- Función de reconto: devolve só totais por xogador obxectivo, nunca quen votou.
+-- SECURITY DEFINER porque necesita ler todas as filas de votos para sumalas,
+-- mesmo cando quen chama só ten permiso RLS para ver o seu propio voto.
+CREATE OR REPLACE FUNCTION social_vote_tally(p_game_id UUID, p_round INT)
+RETURNS TABLE(target_player_id UUID, votes BIGINT)
+LANGUAGE sql SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT target_player_id, COUNT(*) AS votes
+  FROM social_game_votes
+  WHERE game_id = p_game_id AND round = p_round AND target_player_id IS NOT NULL
+  GROUP BY target_player_id
+  ORDER BY votes DESC;
+$$;
+
+GRANT EXECUTE ON FUNCTION social_vote_tally(UUID, INT) TO authenticated;
 
 
 -- ── 10. SCORE TEMPLATES ─────────────────────────────────────

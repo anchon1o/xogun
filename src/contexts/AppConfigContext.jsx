@@ -30,7 +30,7 @@ const DEFAULTS = {
     dice: true, scoreboard: true, timer: true, turns: true,
     role_dealer: true, resource_bank: true, objective_counter: true,
     first_player: true, session_planner: true, music: true,
-    match_notes: true, team_generator: true, soundboard: true, character_sheet: true,
+    match_notes: true, team_generator: true, soundboard: true, character_sheet: true, social_game_launcher: true,
   },
   accent_presets: [
     '#c8a96e', '#e8c87a', '#e8955a', '#6e8dc8',

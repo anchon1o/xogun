@@ -5,6 +5,7 @@ import { useAuth } from '../../contexts/AuthContext'
 import { useMatches } from '../../hooks/useMatches'
 import { calculateSectionTotal } from '../../lib/scoreTemplates'
 import { loadFeltPreference, getFelt } from '../../lib/feltPreference'
+import { useToast } from '../../contexts/ToastContext'
 import ScoreTemplateCreator from './ScoreTemplateCreator'
 
 const COLORS = ['#c8a96e','#6e8dc8','#6ec87e','#c86e6e','#c86ec8','#6ec8c8','#c8b46e','#8e6ec8']
@@ -15,6 +16,7 @@ function playersFromSession(sessionPlayers) {
 
 function SaveMatchModal({ totals, sorted, gameId, gameName, matchId, onClose, onSaved }) {
   const { user } = useAuth()
+  const toast = useToast()
   const { createMatch, updateMatch } = useMatches(user?.id)
   const [winnerIds, setWinnerIds] = useState(() => {
     const top = sorted[0]?.total
@@ -51,7 +53,8 @@ function SaveMatchModal({ totals, sorted, gameId, gameName, matchId, onClose, on
       }, matchPlayers))
     }
     setSaving(false)
-    if (!error) { onSaved?.(); onClose() }
+    if (error) toast.error('Non se puido gardar a partida — téntao de novo')
+    else { onSaved?.(); onClose() }
   }
 
   return (
@@ -88,6 +91,7 @@ function SaveMatchModal({ totals, sorted, gameId, gameName, matchId, onClose, on
 
 function SaveInProgressButton({ players, totals, gameId, gameName, matchId, onSaved }) {
   const { user } = useAuth()
+  const toast = useToast()
   const { createMatch, updateMatch } = useMatches(user?.id)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -100,25 +104,32 @@ function SaveInProgressButton({ players, totals, gameId, gameName, matchId, onSa
       score: { total: p.total, rounds: p.scores, sections: p.sections },
       winner: false,
     }))
+    let hadError = false
     if (matchId) {
-      await updateMatch(matchId, {
+      const { error } = await updateMatch(matchId, {
         scores: Object.fromEntries(totals.map(p => [p.name, p.total])),
       })
+      hadError = !!error
       // Nota: os xogadores individuais non se actualizan aquí para simplificar —
       // a partida activa gárdase principalmente para retomar as puntuacións totais.
     } else {
-      const { data } = await createMatch({
+      const { data, error } = await createMatch({
         game_id: gameId || null,
         game_name: gameName || null,
         status: 'active',
         started_at: new Date().toISOString(),
         scores: Object.fromEntries(totals.map(p => [p.name, p.total])),
       }, matchPlayers)
+      hadError = !!error
       if (data) onSaved?.(data.id)
     }
     setSaving(false)
-    setSaved(true)
-    setTimeout(() => setSaved(false), 2500)
+    if (hadError) {
+      toast.error('Non se puido gardar o progreso — téntao de novo')
+    } else {
+      setSaved(true)
+      setTimeout(() => setSaved(false), 2500)
+    }
   }
 
   return (

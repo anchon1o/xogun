@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Plus, Shuffle, LayoutGrid, List, Library, BookOpen, ListChecks } from 'lucide-react'
+import { Plus, Shuffle, LayoutGrid, List, Library, BookOpen, ListChecks, GitCompare } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { useGames } from '../hooks/useGames'
 import { useCollection, COLLECTION_STATUSES } from '../hooks/useCollection'
@@ -10,14 +10,18 @@ import GameForm from '../components/collection/GameForm'
 import GameDetail from '../components/collection/GameDetail'
 import BggImport from '../components/collection/BggImport'
 import GameListsPanel from '../components/collection/GameListsPanel'
+import GameCompareModal from '../components/collection/GameCompareModal'
+import { useToast } from '../contexts/ToastContext'
 
 export default function GamesPage() {
   const { user, profile } = useAuth()
+  const toast = useToast()
   const [mode, setMode] = useState('catalog') // 'catalog' | 'collection' | 'lists'
   const [statusFilter, setStatusFilter] = useState('all')
   const [filters, setFilters] = useState({ search: '', players: '', maxDuration: '', category: '', mechanic: '' })
   const [showForm, setShowForm]     = useState(false)
   const [showImport, setShowImport] = useState(false)
+  const [showCompare, setShowCompare] = useState(false)
   const [editGame, setEditGame]     = useState(null)
   const [detailGame, setDetailGame] = useState(null)
   const [view, setView]             = useState('grid')
@@ -53,9 +57,14 @@ export default function GamesPage() {
   }
 
   async function handleSetStatus(game, statusId) {
-    if (!user) { alert('Necesitas iniciar sesión para xestionar a túa colección'); return }
-    if (statusId === null) await removeFromCollection(game.id)
-    else await addToCollection(game.id, statusId, profile?.collection_visibility)
+    if (!user) { toast.info('Necesitas iniciar sesión para xestionar a túa colección'); return }
+    if (statusId === null) {
+      const { error } = await removeFromCollection(game.id)
+      if (error) toast.error('Non se puido quitar o xogo da colección')
+    } else {
+      const { error } = await addToCollection(game.id, statusId, profile?.collection_visibility)
+      if (error) toast.error('Non se puido gardar o cambio — téntao de novo')
+    }
   }
 
   async function handleSetVisibility(game, visibility) {
@@ -91,6 +100,9 @@ export default function GamesPage() {
             </div>
             <button onClick={pickRandom} className="btn-ghost flex items-center gap-1.5 text-xs">
               <Shuffle size={13} /> Aleatorio
+            </button>
+            <button onClick={() => setShowCompare(true)} className="btn-ghost flex items-center gap-1.5 text-xs">
+              <GitCompare size={13} /> Comparar
             </button>
             {user && <button onClick={() => setShowImport(true)} className="btn-secondary text-xs">Importar BGG</button>}
             <button onClick={() => { setEditGame(null); setShowForm(true) }} className="btn-primary flex items-center gap-1.5 text-xs">
@@ -192,6 +204,7 @@ export default function GamesPage() {
           onSaved={refetch}
         />
       )}
+      {showCompare && <GameCompareModal onClose={() => setShowCompare(false)} />}
       {showImport && <BggImport onClose={() => setShowImport(false)} onImported={refetch} userId={user?.id} />}
     </div>
   )

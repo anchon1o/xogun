@@ -41,6 +41,67 @@ export const BUILTIN_TEMPLATES = [
       ],
     },
   },
+  {
+    id: 'builtin-vampire',
+    name: 'Vampiro: A Mascarada',
+    theme: 'horror',
+    config: {
+      stats: [
+        { id: 'strength', label: 'Forza', abbr: 'FOR' },
+        { id: 'dexterity', label: 'Destreza', abbr: 'DES' },
+        { id: 'charisma', label: 'Carisma', abbr: 'CAR' },
+        { id: 'manipulation', label: 'Manipulación', abbr: 'MAN' },
+        { id: 'intelligence', label: 'Intelixencia', abbr: 'INT' },
+        { id: 'wits', label: 'Astucia', abbr: 'AST' },
+      ],
+      fields: [
+        { id: 'clan', label: 'Clan', type: 'text' },
+        { id: 'generation', label: 'Xeración', type: 'text' },
+        { id: 'humanity', label: 'Humanidade', type: 'number' },
+        { id: 'vitae', label: 'Sangue (Vitae)', type: 'number' },
+        { id: 'notes', label: 'Notas / Disciplinas / Vínculos', type: 'textarea' },
+      ],
+    },
+  },
+  {
+    id: 'builtin-cyberpunk',
+    name: 'Cyberpunk (xenérico sci-fi)',
+    theme: 'scifi',
+    config: {
+      stats: [
+        { id: 'reflexes', label: 'Reflexos', abbr: 'REF' },
+        { id: 'tech', label: 'Técnica', abbr: 'TEC' },
+        { id: 'intelligence', label: 'Intelixencia', abbr: 'INT' },
+        { id: 'will', label: 'Vontade', abbr: 'VON' },
+      ],
+      fields: [
+        { id: 'role', label: 'Rol (Solo, Netrunner, Fixer...)', type: 'text' },
+        { id: 'level', label: 'Nivel', type: 'number' },
+        { id: 'hp', label: 'Vida', type: 'number' },
+        { id: 'armor', label: 'Armadura', type: 'number' },
+        { id: 'notes', label: 'Notas / Ciberware / Equipo', type: 'textarea' },
+      ],
+    },
+  },
+  {
+    id: 'builtin-pbta',
+    name: 'Lixeiro tipo Apocalypse World',
+    theme: 'modern',
+    config: {
+      stats: [
+        { id: 'cool', label: 'Frialdade', abbr: 'FRI' },
+        { id: 'hard', label: 'Dureza', abbr: 'DUR' },
+        { id: 'hot', label: 'Atractivo', abbr: 'ATR' },
+        { id: 'sharp', label: 'Perspicacia', abbr: 'PER' },
+        { id: 'weird', label: 'Rareza', abbr: 'RAR' },
+      ],
+      fields: [
+        { id: 'playbook', label: 'Arquetipo (Playbook)', type: 'text' },
+        { id: 'harm', label: 'Dano acumulado', type: 'number' },
+        { id: 'notes', label: 'Notas / Movementos / Vínculos', type: 'textarea' },
+      ],
+    },
+  },
 ]
 
 export const THEME_STYLES = {

@@ -4,6 +4,7 @@ import { useCatalogMeta } from '../../hooks/useCatalogMeta'
 import { useGameRating } from '../../hooks/useGameRating'
 import { useCollection } from '../../hooks/useCollection'
 import { useAuth } from '../../contexts/AuthContext'
+import { useToast } from '../../contexts/ToastContext'
 import ImagePreview from '../shared/ImagePreview'
 
 const VIDEO_TYPE_LABELS = {
@@ -21,6 +22,7 @@ function getYouTubeThumbnail(url) {
 export default function GameDetail({ game, onClose, onEdit, canEdit }) {
   const { categories, mechanics } = useCatalogMeta()
   const { user } = useAuth()
+  const toast = useToast()
   const { avg: communityAvg, count: ratingCount, refetch: refetchRating } = useGameRating(game?.id)
   const { getEntry, hasGame, updateEntry } = useCollection(user?.id)
   const [hoverRating, setHoverRating] = useState(0)
@@ -31,9 +33,10 @@ export default function GameDetail({ game, onClose, onEdit, canEdit }) {
   const myRating = myEntry?.personal_rating || 0
 
   async function setRating(value) {
-    if (!user) { alert('Necesitas iniciar sesión para puntuar xogos'); return }
-    if (!myEntry) { alert('Engade primeiro este xogo á túa colección para puntualo'); return }
-    await updateEntry(game.id, { personal_rating: value })
+    if (!user) { toast.info('Necesitas iniciar sesión para puntuar xogos'); return }
+    if (!myEntry) { toast.info('Engade primeiro este xogo á túa colección para puntualo'); return }
+    const { error } = await updateEntry(game.id, { personal_rating: value })
+    if (error) { toast.error('Non se puido gardar a puntuación'); return }
     refetchRating()
   }
 

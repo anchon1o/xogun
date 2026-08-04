@@ -36,7 +36,8 @@ xogun/
 │   │   ├── AppConfigContext.jsx      (configuración da app, cargada de app_config)
 │   │   ├── ThemeContext.jsx          (tema claro/escuro/pixel, cor de acento)
 │   │   ├── GameSessionContext.jsx    (xogo + xogadores + plantilla activos)
-│   │   └── MusicPlayerContext.jsx    (reprodutor YouTube persistente)
+│   │   ├── MusicPlayerContext.jsx    (reprodutor YouTube persistente)
+│   │   └── ToastContext.jsx          (avisos de éxito/erro visibles en toda a app)
 │   │
 │   ├── hooks/                    → Lóxica de datos (un hook por dominio)
 │   │   ├── useGames.js               (catálogo, xogos pendentes)
@@ -60,6 +61,7 @@ xogun/
 │   │   ├── scoreTemplates.js         (presets de estrutura de marcador)
 │   │   ├── characterTemplates.js     (plantillas de folla de personaxe)
 │   │   ├── feltPreference.js         (cor de tapete compartida)
+│   │   ├── tableShapes.js            (formas de mesa e distribución de asentos)
 │   │   ├── soundEffects.js           (efectos de son sintéticos)
 │   │   └── exportMatches.js          (exportación a CSV)
 │   │
@@ -77,7 +79,8 @@ xogun/
 │   │   │   ├── GameForm.jsx          (crear/editar xogo, importación BGG)
 │   │   │   ├── GameDetail.jsx        (ficha completa, puntuacións, vídeos)
 │   │   │   ├── BggImport.jsx
-│   │   │   └── GameListsPanel.jsx
+│   │   │   ├── GameListsPanel.jsx
+│   │   │   └── GameCompareModal.jsx  (comparador de xogos lado a lado)
 │   │   └── tools/                    (as 12 ferramentas de Ferramentas)
 │   │       ├── SessionSetup.jsx      (configuración inicial: xogo+xogadores+plantilla)
 │   │       ├── DiceWidget.jsx        (dados 3D, moeda personalizable)
@@ -106,6 +109,7 @@ xogun/
 │       ├── StatsPage.jsx             → /estatisticas (+ logros)
 │       ├── ChallengesPage.jsx        → /retos
 │       ├── CalendarPage.jsx          → /calendario
+│       ├── SocialGamePage.jsx        → /social e /social/:code (reparto secreto multidispositivo)
 │       └── admin/                    → /admin/* (só is_admin)
 │           ├── AdminLayout.jsx           (menú responsive)
 │           ├── AdminUsers.jsx
@@ -120,7 +124,8 @@ xogun/
 │           └── AdminActivityLog.jsx      (rexistro de moderación)
 │
 ├── supabase-schema.sql           → Schema completo (instalación desde cero)
-└── migration-*.sql               → Migracións incrementais (bases de datos existentes)
+├── migration-ALL.sql             → Migración consolidada — recomendada para bases xa existentes
+└── migration-*.sql               → Migracións incrementais individuais (histórico, xa incluídas en migration-ALL.sql)
 ```
 
 ---

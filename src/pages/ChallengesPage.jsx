@@ -5,6 +5,7 @@ import { useFriendships } from '../hooks/useFriendships'
 import { useChallenges } from '../hooks/useChallenges'
 import { useGames } from '../hooks/useGames'
 import { UserAvatar } from '../hooks/useAvatars'
+import { useToast } from '../contexts/ToastContext'
 
 const STATUS_LABELS = {
   pending: { label: 'Pendente', color: 'text-xogun-muted border-xogun-border' },
@@ -146,13 +147,16 @@ function ChallengeCard({ challenge, isSent, onResolve, onDelete }) {
 
 export default function ChallengesPage() {
   const { user } = useAuth()
+  const toast = useToast()
   const { friends, getFriendProfile } = useFriendships(user?.id)
   const { sent, received, loading, createChallenge, resolveChallenge, deleteChallenge } = useChallenges(user?.id)
   const [showNew, setShowNew] = useState(false)
   const [tab, setTab] = useState('received')
 
   async function handleCreate(data) {
-    await createChallenge(data)
+    const { error } = await createChallenge(data)
+    if (error) { toast.error('Non se puido enviar o reto — téntao de novo'); return }
+    toast.success('Reto enviado')
     setShowNew(false)
   }
 

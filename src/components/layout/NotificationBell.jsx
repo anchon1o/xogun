@@ -11,6 +11,7 @@ const TYPE_EMOJI = {
   game_approved: '📚',
   challenge_received: '⚔️',
   session_reminder: '📅',
+  social_game: '🐺',
 }
 
 function timeAgo(dateStr) {

@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { Trash2, Plus } from 'lucide-react'
 import { useAppConfig } from '../../contexts/AppConfigContext'
+import { useToast } from '../../contexts/ToastContext'
 import Logo from '../../components/shared/Logo'
 
 export default function AdminAppearance() {
   const { config, updateConfig } = useAppConfig()
+  const toast = useToast()
   const [appName, setAppName] = useState(config.app_name || 'Xogún')
   const [logoUrl, setLogoUrl] = useState(config.logo_url || '')
   const [newColor, setNewColor] = useState('#e8955a')
@@ -22,12 +24,12 @@ export default function AdminAppearance() {
 
   async function saveName() {
     await updateConfig('app_name', appName)
-    alert('Nome gardado')
+    toast.success('Nome gardado')
   }
 
   async function saveLogo() {
     await updateConfig('logo_url', logoUrl || null)
-    alert('Logo gardado')
+    toast.success('Logo gardado')
   }
 
   function resetLogo() {

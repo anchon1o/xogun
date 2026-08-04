@@ -5,6 +5,7 @@ import { useSessionCalendar } from '../hooks/useSessionCalendar'
 import { useFriendships } from '../hooks/useFriendships'
 import { useGames } from '../hooks/useGames'
 import { UserAvatar } from '../hooks/useAvatars'
+import { useToast } from '../contexts/ToastContext'
 
 const RSVP_LABELS = {
   pending: { label: 'Por confirmar', emoji: '❓' },
@@ -152,12 +153,15 @@ function SessionCard({ session, userId, onRsvp, onDelete }) {
 
 export default function CalendarPage() {
   const { user } = useAuth()
+  const toast = useToast()
   const { friends, getFriendProfile } = useFriendships(user?.id)
   const { sessions, loading, createSession, updateRsvp, deleteSession } = useSessionCalendar(user?.id)
   const [showNew, setShowNew] = useState(false)
 
   async function handleCreate(data) {
-    await createSession(data)
+    const { error } = await createSession(data)
+    if (error) { toast.error('Non se puido crear a sesión — téntao de novo'); return }
+    toast.success('Sesión creada')
     setShowNew(false)
   }
 

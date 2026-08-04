@@ -73,6 +73,7 @@ export default function AdminFeatures() {
         <Toggle label="👥 Xerador de equipos" checked={tools.team_generator} onChange={v => updateTool('team_generator', v)} />
         <Toggle label="🔊 Botonera de sons" checked={tools.soundboard} onChange={v => updateTool('soundboard', v)} />
         <Toggle label="📜 Follas de personaxe" checked={tools.character_sheet} onChange={v => updateTool('character_sheet', v)} />
+        <Toggle label="🐺 Xogo social (acceso rápido)" checked={tools.social_game_launcher} onChange={v => updateTool('social_game_launcher', v)} />
         <Toggle label="🎰 Selector de xogador inicial" checked={tools.first_player} onChange={v => updateTool('first_player', v)} />
         <Toggle label="📅 Planificador de sesión" checked={tools.session_planner} onChange={v => updateTool('session_planner', v)} />
         <Toggle label="🎵 Reprodutor de música" checked={tools.music} onChange={v => updateTool('music', v)} />

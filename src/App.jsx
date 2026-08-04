@@ -4,6 +4,7 @@ import { AppConfigProvider } from './contexts/AppConfigContext'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { GameSessionProvider } from './contexts/GameSessionContext'
 import { MusicPlayerProvider } from './contexts/MusicPlayerContext'
+import { ToastProvider } from './contexts/ToastContext'
 import Layout from './components/layout/Layout'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
@@ -15,6 +16,7 @@ import FriendsPage from './pages/FriendsPage'
 import StatsPage from './pages/StatsPage'
 import ChallengesPage from './pages/ChallengesPage'
 import CalendarPage from './pages/CalendarPage'
+import SocialGamePage from './pages/SocialGamePage'
 import AdminLayout from './pages/admin/AdminLayout'
 import AdminUsers from './pages/admin/AdminUsers'
 import AdminCatalog from './pages/admin/AdminCatalog'
@@ -96,6 +98,8 @@ function AppRoutes() {
               <Route path="estatisticas" element={<PrivateRoute><StatsPage /></PrivateRoute>} />
               <Route path="retos"        element={<PrivateRoute><ChallengesPage /></PrivateRoute>} />
               <Route path="calendario"   element={<PrivateRoute><CalendarPage /></PrivateRoute>} />
+              <Route path="social"       element={<PrivateRoute><SocialGamePage /></PrivateRoute>} />
+              <Route path="social/:code" element={<PrivateRoute><SocialGamePage /></PrivateRoute>} />
               <Route path="admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
                 <Route index               element={<Navigate to="usuarios" replace />} />
                 <Route path="usuarios"     element={<AdminUsers />} />
@@ -119,12 +123,14 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <AppConfigProvider>
-      <AuthProvider>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </AuthProvider>
-    </AppConfigProvider>
+    <ToastProvider>
+      <AppConfigProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </AuthProvider>
+      </AppConfigProvider>
+    </ToastProvider>
   )
 }

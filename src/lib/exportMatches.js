@@ -6,6 +6,22 @@ function csvEscape(value) {
   return str
 }
 
+function downloadCSV(headers, rows, filename) {
+  const csv = [headers, ...rows]
+    .map(row => row.map(csvEscape).join(','))
+    .join('\n')
+
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
+}
+
 export function exportMatchesToCSV(matches, filename = 'xogun-partidas.csv') {
   const headers = ['Xogo', 'Estado', 'Data', 'Xogadores', 'Gañador(es)', 'Puntuacións']
   const rows = matches.map(m => {
@@ -24,18 +40,46 @@ export function exportMatchesToCSV(matches, filename = 'xogun-partidas.csv') {
       scores,
     ]
   })
+  downloadCSV(headers, rows, filename)
+}
 
-  const csv = [headers, ...rows]
-    .map(row => row.map(csvEscape).join(','))
-    .join('\n')
+/**
+ * Exporta a colección persoal completa: estado, puntuación propia,
+ * visibilidade e data de alta de cada entrada.
+ */
+export function exportCollectionToCSV(collection, filename = 'xogun-coleccion.csv') {
+  const STATUS_LABELS = { owned: 'Teño', wishlist: 'Quero ter', played: 'Xoguei', favorite: 'Favorito' }
+  const VIS_LABELS = { private: 'Privada', friends: 'Só amigos', public: 'Pública' }
 
-  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = filename
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-  URL.revokeObjectURL(url)
+  const headers = ['Xogo', 'Estado', 'A miña puntuación', 'Visibilidade', 'Veces xogado', 'Data de alta']
+  const rows = collection.map(entry => [
+    entry.games?.name || 'Xogo descoñecido',
+    STATUS_LABELS[entry.status] || entry.status,
+    entry.personal_rating ?? '',
+    VIS_LABELS[entry.visibility] || entry.visibility || '',
+    entry.times_played ?? 0,
+    entry.created_at ? new Date(entry.created_at).toLocaleDateString('gl') : '',
+  ])
+  downloadCSV(headers, rows, filename)
+}
+
+/**
+ * Exporta un resumo de estatísticas persoais (as mesmas que se mostran
+ * na páxina de Estatísticas) como táboa clave-valor.
+ */
+export function exportStatsToCSV(stats, filename = 'xogun-estatisticas.csv') {
+  const headers = ['Métrica', 'Valor']
+  const rows = [
+    ['Total de partidas', stats.totalMatches],
+    ['Vitorias', stats.totalWins],
+    ['Porcentaxe de vitorias', `${stats.winRate}%`],
+    ['Racha actual', stats.winStreak],
+    ['Racha máxima', stats.longestWinStreak],
+    ['Xogo máis xogado', stats.mostPlayedGame?.name || '—'],
+    ['Xogos distintos xogados', stats.gamesPlayed.length],
+  ]
+  stats.favoriteOpponents.forEach((o, i) => {
+    rows.push([`Adversario frecuente #${i + 1}`, `${o.name} (${o.count} partidas)`])
+  })
+  downloadCSV(headers, rows, filename)
 }
