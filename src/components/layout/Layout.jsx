@@ -33,7 +33,7 @@ export default function Layout() {
           <Link to="/" className="flex items-center gap-2 flex-shrink-0">
             <Logo size={32} />
             <span className="font-display text-lg text-xogun-accent tracking-wider hidden sm:block">
-              {config.app_name || 'Xogún'}
+              {config.app_name || 'Xōgun'}
             </span>
           </Link>
 

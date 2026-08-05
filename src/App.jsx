@@ -41,7 +41,7 @@ function Splash() {
             <circle style={{ fill: 'currentColor' }} cx="98.320282" cy="96.699623" r="12.425092" />
           </g>
         </svg>
-        <span className="font-display text-xl text-xogun-accent tracking-wider">Xogún</span>
+        <span className="font-display text-xl text-xogun-accent tracking-wider">Xōgun</span>
       </div>
     </div>
   )
@@ -54,7 +54,7 @@ function MaintenanceScreen() {
         <span className="text-5xl">🚧</span>
         <h1 className="font-display text-2xl text-xogun-accent mt-4">Volvemos enseguida</h1>
         <p className="text-xogun-muted text-sm mt-2">
-          Xogún está en mantemento neste momento. Proba de novo en uns minutos.
+          Xōgun está en mantemento neste momento. Proba de novo en uns minutos.
         </p>
       </div>
     </div>

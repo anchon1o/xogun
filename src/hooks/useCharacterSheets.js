@@ -49,10 +49,10 @@ export function useCharacters(userId) {
     setLoading(false)
   }
 
-  async function createCharacter(templateId, name, data = {}) {
+  async function createCharacter(templateId, builtinTemplateId, name, data = {}) {
     const { data: character, error } = await supabase
       .from('characters')
-      .insert({ template_id: templateId, user_id: userId, name, data })
+      .insert({ template_id: templateId, builtin_template_id: builtinTemplateId, user_id: userId, name, data })
       .select('*, character_sheet_templates(name, theme, config)').single()
     if (!error) fetch()
     return { data: character, error }

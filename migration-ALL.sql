@@ -578,3 +578,31 @@ GRANT EXECUTE ON FUNCTION social_vote_tally(UUID, INT) TO authenticated;
 UPDATE app_config
 SET value = value || '{"social_game_launcher": true}'::jsonb
 WHERE key = 'tools_enabled';
+-- ─────────────────────────────────────────────────────────
+-- Orixe: migration-character-sheet-fix.sql
+-- ─────────────────────────────────────────────────────────
+
+-- ============================================================
+-- XŌGUN — Migración: arranxo do bug de follas de personaxe
+-- (as plantillas incorporadas non gardaban cal se elixira, así que
+-- sempre se amosaba a folla de D&D 5e independentemente da escollida)
+-- ============================================================
+
+ALTER TABLE characters ADD COLUMN IF NOT EXISTS builtin_template_id TEXT;
+
+
+-- ─────────────────────────────────────────────────────────
+-- Orixe: migration-display-name.sql
+-- ─────────────────────────────────────────────────────────
+
+-- ============================================================
+-- XŌGUN — Migración: nome visible estilizado "Xōgun"
+-- (Só afecta ao texto amosado na interface — identificadores internos,
+-- nomes de arquivo, clases CSS e o nome do paquete seguen sendo "xogun".)
+-- ============================================================
+
+UPDATE app_config
+SET value = '"Xōgun"'::jsonb
+WHERE key = 'app_name';
+
+

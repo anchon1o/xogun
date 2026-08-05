@@ -126,7 +126,7 @@ CREATE POLICY "só admin modifica config"     ON app_config FOR ALL USING (
 );
 
 INSERT INTO app_config (key, value) VALUES
-  ('app_name', '"Xogún"'),
+  ('app_name', '"Xōgun"'),
   ('maintenance_mode', 'false'),
   ('features', '{
     "tools_public": true,
@@ -535,14 +535,15 @@ CREATE POLICY "creador/admin elimina plantillas de personaxe"
 
 -- ── 9i. CHARACTERS (personaxes concretos, rechables por partida) ────
 CREATE TABLE characters (
-  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  template_id  UUID REFERENCES character_sheet_templates(id) ON DELETE SET NULL,
-  user_id      UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
-  name         TEXT NOT NULL,
-  avatar_url   TEXT,
-  data         JSONB DEFAULT '{}',   -- valores dos campos definidos na plantilla
-  created_at   TIMESTAMPTZ DEFAULT NOW(),
-  updated_at   TIMESTAMPTZ DEFAULT NOW()
+  id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  template_id         UUID REFERENCES character_sheet_templates(id) ON DELETE SET NULL,
+  builtin_template_id TEXT,             -- id da plantilla incorporada (ex: 'builtin-vampire') se non é personalizada
+  user_id             UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  name                TEXT NOT NULL,
+  avatar_url          TEXT,
+  data                JSONB DEFAULT '{}',   -- valores dos campos definidos na plantilla
+  created_at          TIMESTAMPTZ DEFAULT NOW(),
+  updated_at          TIMESTAMPTZ DEFAULT NOW()
 );
 
 ALTER TABLE characters ENABLE ROW LEVEL SECURITY;

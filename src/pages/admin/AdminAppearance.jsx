@@ -7,7 +7,7 @@ import Logo from '../../components/shared/Logo'
 export default function AdminAppearance() {
   const { config, updateConfig } = useAppConfig()
   const toast = useToast()
-  const [appName, setAppName] = useState(config.app_name || 'Xogún')
+  const [appName, setAppName] = useState(config.app_name || 'Xōgun')
   const [logoUrl, setLogoUrl] = useState(config.logo_url || '')
   const [newColor, setNewColor] = useState('#e8955a')
 
@@ -62,7 +62,7 @@ export default function AdminAppearance() {
           </div>
           <div className="flex-1 space-y-2">
             <p className="text-xogun-muted text-xs">
-              Por defecto úsase o selo de Xogún, que se adapta automaticamente á cor de acento do tema.
+              Por defecto úsase o selo de Xōgun, que se adapta automaticamente á cor de acento do tema.
               Podes subilo a calquera servizo de imaxes (imgur, etc.) e pegar aquí a URL para usar un logo personalizado.
             </p>
             <div className="flex gap-2">

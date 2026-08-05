@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Plus, Trash2, ArrowLeft, User } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
+import { useToast } from '../../contexts/ToastContext'
 import { useCharacterTemplates, useCharacters } from '../../hooks/useCharacterSheets'
 import { BUILTIN_TEMPLATES, getThemeStyle } from '../../lib/characterTemplates'
 
@@ -30,15 +31,17 @@ function NewCharacterForm({ allTemplates, onCreate, onCancel }) {
 }
 
 function CharacterSheet({ character, template, onUpdate, onDelete, onBack }) {
+  const toast = useToast()
   const style = getThemeStyle(template?.theme)
   const stats = template?.config?.stats || []
   const fields = template?.config?.fields || []
   const [data, setData] = useState(character.data || {})
 
-  function updateField(id, value) {
+  async function updateField(id, value) {
     const next = { ...data, [id]: value }
     setData(next)
-    onUpdate(character.id, { data: next })
+    const { error } = await onUpdate(character.id, { data: next })
+    if (error) toast.error('Non se puido gardar o cambio')
   }
 
   return (
@@ -85,6 +88,7 @@ function CharacterSheet({ character, template, onUpdate, onDelete, onBack }) {
 
 export default function CharacterSheetWidget() {
   const { user } = useAuth()
+  const toast = useToast()
   const { templates: customTemplates } = useCharacterTemplates(user?.id)
   const { characters, loading, createCharacter, updateCharacter, deleteCharacter } = useCharacters(user?.id)
   const [showNew, setShowNew] = useState(false)
@@ -98,13 +102,17 @@ export default function CharacterSheetWidget() {
 
   async function handleCreate(templateId, name) {
     const isBuiltin = templateId.startsWith('builtin-')
-    const { data } = await createCharacter(isBuiltin ? null : templateId, name, {})
+    const { data, error } = await createCharacter(isBuiltin ? null : templateId, isBuiltin ? templateId : null, name, {})
+    if (error) { toast.error('Non se puido crear o personaxe'); return }
     setShowNew(false)
     if (data) setSelectedId(data.id)
   }
 
   function resolveTemplate(character) {
     if (character.template_id) return character.character_sheet_templates
+    if (character.builtin_template_id) {
+      return BUILTIN_TEMPLATES.find(t => t.id === character.builtin_template_id) || BUILTIN_TEMPLATES[0]
+    }
     return BUILTIN_TEMPLATES[0]
   }
 

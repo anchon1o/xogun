@@ -24,7 +24,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <Logo size={64} className="mx-auto mb-4" />
-          <h1 className="font-display text-3xl text-xogun-accent tracking-wider">Xogún</h1>
+          <h1 className="font-display text-3xl text-xogun-accent tracking-wider">Xōgun</h1>
           <p className="text-xogun-muted text-sm mt-1">Inicia sesión para acceder á túa colección</p>
         </div>
         <div className="card">

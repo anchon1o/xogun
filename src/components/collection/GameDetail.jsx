@@ -1,11 +1,15 @@
 import { useState } from 'react'
-import { X, Users, Clock, Star, ExternalLink, Youtube, FileText, Edit2 } from 'lucide-react'
+import { X, Users, Clock, Star, ExternalLink, Youtube, FileText, Edit2, Gauge, Palette, Globe, Link as LinkIcon } from 'lucide-react'
 import { useCatalogMeta } from '../../hooks/useCatalogMeta'
 import { useGameRating } from '../../hooks/useGameRating'
-import { useCollection } from '../../hooks/useCollection'
+import { useGameOwners } from '../../hooks/useGameOwners'
+import { useCollection, COLLECTION_STATUSES } from '../../hooks/useCollection'
 import { useAuth } from '../../contexts/AuthContext'
 import { useToast } from '../../contexts/ToastContext'
+import { UserAvatar } from '../../hooks/useAvatars'
 import ImagePreview from '../shared/ImagePreview'
+
+const LANGUAGE_LABELS = { gl: 'Galego', es: 'Castelán', en: 'Inglés', pt: 'Portugués', fr: 'Francés' }
 
 const VIDEO_TYPE_LABELS = {
   tutorial: 'Tutorial',
@@ -25,6 +29,7 @@ export default function GameDetail({ game, onClose, onEdit, canEdit }) {
   const toast = useToast()
   const { avg: communityAvg, count: ratingCount, refetch: refetchRating } = useGameRating(game?.id)
   const { getEntry, hasGame, updateEntry } = useCollection(user?.id)
+  const { owners, loading: ownersLoading } = useGameOwners(game?.id)
   const [hoverRating, setHoverRating] = useState(0)
 
   if (!game) return null
@@ -90,8 +95,54 @@ export default function GameDetail({ game, onClose, onEdit, canEdit }) {
                   {game.designer && <>Deseño: {game.designer}</>}
                 </p>
               )}
+              {game.artists && (
+                <p className="text-xogun-muted text-xs mt-0.5 flex items-center gap-1">
+                  <Palette size={11} /> Ilustración: {game.artists}
+                </p>
+              )}
+              {game.bgg_id && (
+                <a href={`https://boardgamegeek.com/boardgame/${game.bgg_id}`} target="_blank" rel="noopener noreferrer"
+                  className="text-xogun-accent text-xs mt-1.5 inline-flex items-center gap-1 hover:underline">
+                  <LinkIcon size={11} /> Ver en BoardGameGeek
+                </a>
+              )}
             </div>
           </div>
+
+          {/* Datos adicionais: idade, complexidade, xogadores recomendados, idiomas */}
+          {(game.age || game.complexity || game.recommended_players || game.languages?.length > 0) && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {game.age && (
+                <div className="card py-2 text-center">
+                  <p className="text-xogun-muted text-[10px] uppercase tracking-wider">Idade</p>
+                  <p className="font-display text-lg text-xogun-text">{game.age}+</p>
+                </div>
+              )}
+              {game.complexity && (
+                <div className="card py-2 text-center">
+                  <p className="text-xogun-muted text-[10px] uppercase tracking-wider flex items-center justify-center gap-1"><Gauge size={10} /> Complexidade</p>
+                  <div className="flex items-center justify-center gap-0.5 mt-1">
+                    {[1, 2, 3, 4, 5].map(n => (
+                      <span key={n} className="w-1.5 h-4 rounded-sm"
+                        style={{ backgroundColor: n <= Math.round(game.complexity) ? 'var(--xogun-accent)' : 'var(--xogun-border)' }} />
+                    ))}
+                  </div>
+                </div>
+              )}
+              {game.recommended_players && (
+                <div className="card py-2 text-center">
+                  <p className="text-xogun-muted text-[10px] uppercase tracking-wider">Recomendado</p>
+                  <p className="font-display text-sm text-xogun-text mt-0.5">{game.recommended_players}</p>
+                </div>
+              )}
+              {game.languages?.length > 0 && (
+                <div className="card py-2 text-center">
+                  <p className="text-xogun-muted text-[10px] uppercase tracking-wider flex items-center justify-center gap-1"><Globe size={10} /> Idiomas</p>
+                  <p className="text-xs text-xogun-text mt-1">{game.languages.map(l => LANGUAGE_LABELS[l] || l).join(', ')}</p>
+                </div>
+              )}
+            </div>
+          )}
 
           {game.description && (
             <p className="text-sm text-xogun-text leading-relaxed">{game.description}</p>
@@ -108,7 +159,7 @@ export default function GameDetail({ game, onClose, onEdit, canEdit }) {
               </div>
             )}
             <div className="text-center">
-              <p className="text-xogun-muted text-[10px] uppercase tracking-wider mb-0.5">Comunidade Xogún</p>
+              <p className="text-xogun-muted text-[10px] uppercase tracking-wider mb-0.5">Comunidade Xōgun</p>
               <p className="font-display text-lg text-xogun-accent flex items-center gap-1 justify-center">
                 {communityAvg ? <><Star size={13} />{communityAvg}</> : <span className="text-xogun-muted text-sm">—</span>}
               </p>
@@ -146,6 +197,25 @@ export default function GameDetail({ game, onClose, onEdit, canEdit }) {
               {gameMechanics.map(m => (
                 <span key={m.id} className="badge border-xogun-accent/30 text-xogun-accent">{m.name}</span>
               ))}
+            </div>
+          )}
+
+          {/* Quen o ten */}
+          {!ownersLoading && owners.length > 0 && (
+            <div>
+              <p className="label mb-2 flex items-center gap-1.5"><Users size={11} /> Quen o ten</p>
+              <div className="flex flex-wrap gap-2">
+                {owners.map((o, i) => {
+                  const statusInfo = COLLECTION_STATUSES.find(s => s.id === o.status)
+                  return (
+                    <div key={o.profiles?.id || i} className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-xogun-surface border border-xogun-border">
+                      <UserAvatar profile={o.profiles} size={20} />
+                      <span className="text-xs">{o.profiles?.display_name || 'Usuario'}</span>
+                      <span className="text-xs" title={statusInfo?.label}>{statusInfo?.emoji}</span>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
           )}
 

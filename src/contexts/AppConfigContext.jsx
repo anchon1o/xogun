@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase'
 const AppConfigContext = createContext(null)
 
 const DEFAULTS = {
-  app_name: 'Xogún',
+  app_name: 'Xōgun',
   maintenance_mode: false,
   logo_url: null,
   features: {
