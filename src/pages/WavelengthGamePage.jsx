@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Plus, Copy, Share2, LogIn } from 'lucide-react'
+import { Plus, Copy, Share2, LogIn, Play } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { useToast } from '../contexts/ToastContext'
 import { useWavelengthGame, createWavelengthGame } from '../hooks/useWavelengthGame'
@@ -14,7 +14,6 @@ function EntryScreen() {
   const navigate = useNavigate()
   const [joinCode, setJoinCode] = useState('')
   const [creating, setCreating] = useState(false)
-
   const lastCode = loadLastCode()
 
   function handleJoin() {
@@ -37,8 +36,8 @@ function EntryScreen() {
         <span className="text-4xl">🎯</span>
         <h1 className="font-display text-2xl text-xogun-accent mt-2">Escala</h1>
         <p className="text-xogun-muted text-sm mt-1">
-          A psíquica ve un obxectivo secreto nun dial e o grupo adivina a posición. Cada xogador
-          participa desde o seu propio móbil.
+          A psíquica ve un obxectivo secreto nun dial e o grupo adivina a posición
+          desde os seus propios móbiles.
         </p>
       </div>
 
@@ -64,8 +63,9 @@ function EntryScreen() {
       </div>
 
       <div className="space-y-2">
-        <input className="input text-center tracking-widest font-display text-lg uppercase" placeholder="CÓDIGO"
-          maxLength={8} value={joinCode} onChange={e => setJoinCode(e.target.value.toUpperCase())}
+        <input className="input text-center tracking-widest font-display text-lg uppercase"
+          placeholder="CÓDIGO" maxLength={8}
+          value={joinCode} onChange={e => setJoinCode(e.target.value.toUpperCase())}
           onKeyDown={e => e.key === 'Enter' && handleJoin()} />
         <button onClick={handleJoin} disabled={joinCode.trim().length < 4}
           className="btn-secondary w-full flex items-center justify-center gap-2 disabled:opacity-50">
@@ -80,23 +80,25 @@ function RoomScreen({ code }) {
   const { user } = useAuth()
   const toast = useToast()
   const navigate = useNavigate()
-  const wavelength = useWavelengthGame(code, user?.id)
+  const w = useWavelengthGame(code, user?.id)
   const [copied, setCopied] = useState(false)
 
   useEffect(() => { saveLastCode(code.toUpperCase()) }, [code])
 
-  if (wavelength.loading) return <p className="text-xogun-muted text-sm text-center py-16">Cargando sala...</p>
+  if (w.loading) return <p className="text-xogun-muted text-sm text-center py-16">Cargando sala...</p>
 
-  if (wavelength.notFound) {
+  if (w.notFound) {
     return (
       <div className="text-center py-16 space-y-3">
-        <p className="text-xogun-muted text-sm">Non se atopou ningunha sala co código <strong>{code}</strong>.</p>
+        <p className="text-xogun-muted text-sm">
+          Non se atopou ningunha sala co código <strong>{code}</strong>.
+        </p>
         <button onClick={() => navigate('/escala')} className="btn-primary">Volver</button>
       </div>
     )
   }
 
-  const { game, players, myPlayer, isHost, guess, setGuess, submitGuess, nextRound } = wavelength
+  const { game, players, isHost, isPsychic, guess, setGuess, myGuess } = w
 
   function copyCode() {
     navigator.clipboard?.writeText(code)
@@ -110,23 +112,43 @@ function RoomScreen({ code }) {
     toast.success('Enlace copiado — compárteo cos xogadores')
   }
 
+  async function handleStartGame() {
+    const { error } = await w.startGame()
+    if (error) toast.error('Non se puido iniciar a partida')
+  }
+
   async function handleSubmitGuess() {
-    const { error } = await submitGuess()
+    const { error } = await w.submitGuess()
     if (error) toast.error('Non se puido rexistrar a túa posición')
+    else toast.success('Posición gardada')
+  }
+
+  async function handleShowResults() {
+    const { error } = await w.showResults()
+    if (error) toast.error('Non se puido mostrar os resultados')
   }
 
   async function handleNextRound() {
-    const { error } = await nextRound()
+    const { error } = await w.nextRound()
     if (error) toast.error('Non se puido avanzar á seguinte rolda')
   }
 
-  const isPsychic = game?.psychic_id === user?.id
+  async function handleDelete() {
+    if (!confirm('Eliminar esta partida para todos?')) return
+    await w.deleteGame()
+    navigate('/escala')
+  }
+
+  const allGuessed = players.length > 0 && players.filter(p => p.user_id !== game?.psychic_id).every(p => {
+    return w.myGuess != null || p.user_id === user?.id
+  })
 
   return (
     <div className="max-w-md mx-auto space-y-5">
       {/* Cabeceira */}
       <div className="text-center space-y-1">
         <h1 className="font-display text-xl text-xogun-text">Escala</h1>
+        <p className="text-xogun-muted text-xs">Rolda {game?.round ?? 1}</p>
         <div className="flex items-center justify-center gap-2 mt-2">
           <span className="font-display text-2xl tracking-widest text-xogun-accent">{code}</span>
           <button onClick={copyCode} className="text-xogun-muted hover:text-xogun-accent"><Copy size={15} /></button>
@@ -135,40 +157,52 @@ function RoomScreen({ code }) {
         {copied && <p className="text-xogun-accent text-[10px]">Código copiado</p>}
       </div>
 
-      {/* Rolda e estado */}
-      {game && (
-        <div className="card text-center space-y-1">
-          <p className="text-xogun-muted text-xs">Rolda {game.round ?? 1}</p>
-          <p className="text-xogun-text text-sm font-medium">
-            {isPsychic ? '🎯 Es a psíquica desta rolda' : '👥 Adivina a posición'}
+      {/* Sala de espera */}
+      {game?.status === 'waiting' && (
+        <div className="card text-center space-y-3">
+          <p className="text-xogun-muted text-sm">
+            {players.length} xogador{players.length !== 1 ? 'es' : ''} na sala. Agardando a que o anfitrión inicie.
           </p>
-          {isPsychic && game.target != null && (
-            <p className="text-xogun-accent text-xs mt-1">
-              O teu obxectivo secreto está en: <strong>{game.target}</strong>/100
-            </p>
+          {isHost && (
+            <button onClick={handleStartGame} disabled={players.length < 2}
+              className="btn-primary flex items-center gap-2 mx-auto disabled:opacity-50">
+              <Play size={15} /> Iniciar partida
+            </button>
+          )}
+          {isHost && players.length < 2 && (
+            <p className="text-xogun-muted text-xs">Necesítanse polo menos 2 xogadores</p>
           )}
         </div>
       )}
 
       {/* Concepto do dial */}
-      {game?.left_concept && game?.right_concept && (
-        <div className="card flex items-center justify-between text-sm">
-          <span className="text-xogun-muted">{game.left_concept}</span>
-          <span className="text-xogun-muted text-xs">◄──────────────►</span>
-          <span className="text-xogun-muted">{game.right_concept}</span>
+      {game?.status !== 'waiting' && game?.left_concept && (
+        <div className="card flex items-center justify-between text-sm gap-2">
+          <span className="text-xogun-text font-medium">{game.left_concept}</span>
+          <span className="text-xogun-border">◄──────►</span>
+          <span className="text-xogun-text font-medium">{game.right_concept}</span>
         </div>
       )}
 
-      {/* Slider de adiviña (non psíquica) */}
-      {game && !isPsychic && game.status === 'guessing' && (
+      {/* Obxectivo secreto — só para a psíquica */}
+      {isPsychic && game?.status === 'guessing' && game?.target != null && (
+        <div className="card border-xogun-accent/40 bg-xogun-accent/5 text-center space-y-1">
+          <p className="text-xogun-muted text-xs">🎯 O teu obxectivo secreto está en</p>
+          <p className="font-display text-3xl text-xogun-accent">{game.target}</p>
+          <p className="text-xogun-muted text-xs">Dá unha pista sen dicir o número</p>
+        </div>
+      )}
+
+      {/* Slider de adiviña — non psíquica */}
+      {game?.status === 'guessing' && !isPsychic && myGuess == null && (
         <div className="card space-y-3">
-          <label className="label mb-0">A túa posición</label>
-          <input type="range" min={0} max={100} value={guess ?? 50}
+          <label className="label mb-0">Onde cres que está o obxectivo?</label>
+          <input type="range" min={0} max={100} value={guess}
             onChange={e => setGuess(Number(e.target.value))}
             className="w-full" style={{ accentColor: '#c8a96e' }} />
           <div className="flex justify-between text-xogun-muted text-xs">
             <span>0</span>
-            <span className="text-xogun-accent font-medium">{guess ?? 50}</span>
+            <span className="text-xogun-accent font-medium text-base">{guess}</span>
             <span>100</span>
           </div>
           <button onClick={handleSubmitGuess} className="btn-primary w-full">
@@ -177,22 +211,47 @@ function RoomScreen({ code }) {
         </div>
       )}
 
+      {/* Confirmación de adiviña enviada */}
+      {game?.status === 'guessing' && !isPsychic && myGuess != null && (
+        <div className="card text-center border-green-400/30 bg-green-400/5">
+          <p className="text-green-400 text-sm">✓ Posición gardada: <strong>{myGuess}</strong></p>
+          <p className="text-xogun-muted text-xs mt-1">Agardando ao resto de xogadores...</p>
+        </div>
+      )}
+
+      {/* Botón de revelar resultados — anfitrión */}
+      {isHost && game?.status === 'guessing' && (
+        <button onClick={handleShowResults} className="btn-secondary w-full">
+          Revelar resultados
+        </button>
+      )}
+
       {/* Resultados */}
       {game?.status === 'results' && (
         <div className="card space-y-3">
-          <p className="label mb-0">Resultados</p>
-          <p className="text-xogun-accent text-sm">
-            Obxectivo: <strong>{game.target}</strong>/100
-          </p>
-          {players.map(p => p.guess != null && (
-            <div key={p.id} className="flex items-center justify-between text-sm">
-              <span className="text-xogun-text">{p.name}</span>
-              <span className="text-xogun-muted">{p.guess}/100</span>
-              <span className={`text-xs font-medium ${Math.abs(p.guess - game.target) <= 5 ? 'text-green-400' : Math.abs(p.guess - game.target) <= 15 ? 'text-xogun-accent' : 'text-xogun-muted'}`}>
-                {Math.abs(p.guess - game.target) <= 5 ? '🎯 Exacto' : Math.abs(p.guess - game.target) <= 15 ? '✅ Preto' : '❌ Lonxe'}
-              </span>
-            </div>
-          ))}
+          <p className="label mb-0">Resultados — Obxectivo: <span className="text-xogun-accent font-display text-lg">{game.target}</span></p>
+          {players
+            .filter(p => p.user_id !== game.psychic_id)
+            .map(p => {
+              const playerGuess = p.user_id === user?.id ? myGuess : null
+              const diff = playerGuess != null ? Math.abs(playerGuess - game.target) : null
+              return (
+                <div key={p.id} className="flex items-center justify-between text-sm">
+                  <span className="text-xogun-text">
+                    {p.profiles?.display_name || 'Xogador'}
+                    {p.user_id === user?.id && ' (ti)'}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    {playerGuess != null && <span className="text-xogun-muted">{playerGuess}</span>}
+                    {diff != null && (
+                      <span className={`text-xs font-medium ${diff <= 5 ? 'text-green-400' : diff <= 15 ? 'text-xogun-accent' : 'text-xogun-muted'}`}>
+                        {diff <= 5 ? '🎯' : diff <= 15 ? '✅' : '❌'} ±{diff}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
           {isHost && (
             <button onClick={handleNextRound} className="btn-primary w-full mt-2">
               Seguinte rolda
@@ -206,20 +265,31 @@ function RoomScreen({ code }) {
         <p className="label">Xogadores ({players.length})</p>
         {players.map(p => (
           <div key={p.id} className="card flex items-center justify-between py-2.5">
-            <span className="text-sm text-xogun-text">{p.name}</span>
+            <span className="text-sm text-xogun-text">
+              {p.profiles?.display_name || 'Xogador'}
+              {p.user_id === user?.id && <span className="text-xogun-muted text-xs ml-1">(ti)</span>}
+            </span>
             <div className="flex items-center gap-2">
-              {game?.psychic_id === p.user_id && <span className="text-xs text-xogun-accent">Psíquica</span>}
-              {game?.status === 'guessing' && (
-                <span className={`text-xs ${p.guess != null ? 'text-green-400' : 'text-xogun-muted'}`}>
-                  {p.guess != null ? '✓' : '…'}
-                </span>
+              {game?.psychic_id === p.user_id && (
+                <span className="text-xs text-xogun-accent">🎯 Psíquica</span>
+              )}
+              {isHost && p.user_id === game?.created_by && (
+                <span className="text-xs text-xogun-muted">anfitrión</span>
               )}
             </div>
           </div>
         ))}
       </div>
 
-      <button onClick={() => navigate('/escala')} className="btn-ghost w-full text-xs">← Saír da sala</button>
+      {isHost && (
+        <button onClick={handleDelete} className="btn-ghost w-full text-xogun-red text-xs">
+          Eliminar partida
+        </button>
+      )}
+
+      <button onClick={() => navigate('/escala')} className="btn-ghost w-full text-xs">
+        ← Saír da sala
+      </button>
     </div>
   )
 }
