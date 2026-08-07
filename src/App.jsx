@@ -17,6 +17,7 @@ import StatsPage from './pages/StatsPage'
 import ChallengesPage from './pages/ChallengesPage'
 import CalendarPage from './pages/CalendarPage'
 import SocialGamePage from './pages/SocialGamePage'
+import WavelengthGamePage from './pages/WavelengthGamePage'
 import AdminLayout from './pages/admin/AdminLayout'
 import AdminUsers from './pages/admin/AdminUsers'
 import AdminCatalog from './pages/admin/AdminCatalog'
@@ -28,6 +29,7 @@ import AdminAvatars from './pages/admin/AdminAvatars'
 import AdminPresets from './pages/admin/AdminPresets'
 import AdminImages from './pages/admin/AdminImages'
 import AdminActivityLog from './pages/admin/AdminActivityLog'
+import AdminBggSync from './pages/admin/AdminBggSync'
 import { useAppConfig } from './contexts/AppConfigContext'
 
 function Splash() {
@@ -100,6 +102,8 @@ function AppRoutes() {
               <Route path="calendario"   element={<PrivateRoute><CalendarPage /></PrivateRoute>} />
               <Route path="social"       element={<PrivateRoute><SocialGamePage /></PrivateRoute>} />
               <Route path="social/:code" element={<PrivateRoute><SocialGamePage /></PrivateRoute>} />
+              <Route path="escala"       element={<PrivateRoute><WavelengthGamePage /></PrivateRoute>} />
+              <Route path="escala/:code" element={<PrivateRoute><WavelengthGamePage /></PrivateRoute>} />
               <Route path="admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
                 <Route index               element={<Navigate to="usuarios" replace />} />
                 <Route path="usuarios"     element={<AdminUsers />} />
@@ -112,6 +116,7 @@ function AppRoutes() {
                 <Route path="avatares"     element={<AdminAvatars />} />
                 <Route path="funcions"     element={<AdminFeatures />} />
                 <Route path="aparencia"    element={<AdminAppearance />} />
+                <Route path="bggsync"      element={<AdminBggSync />} />
               </Route>
             </Route>
           </Routes>

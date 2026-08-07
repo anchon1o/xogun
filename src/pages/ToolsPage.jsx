@@ -17,6 +17,7 @@ import RoleDealerWidget from '../components/tools/RoleDealerWidget'
 import SoundboardWidget from '../components/tools/SoundboardWidget'
 import CharacterSheetWidget from '../components/tools/CharacterSheetWidget'
 import SocialGameLauncherWidget from '../components/tools/SocialGameLauncherWidget'
+import WavelengthLauncherWidget from '../components/tools/WavelengthLauncherWidget'
 import SessionSetup from '../components/tools/SessionSetup'
 import FullscreenButton from '../components/shared/FullscreenButton'
 import { Gamepad2, X, ChevronDown, Users, Save, Bookmark } from 'lucide-react'
@@ -35,6 +36,7 @@ const ALL_WIDGETS = [
   { id: 'role_dealer',        label: 'Roles',             emoji: '🎴', component: RoleDealerWidget },
   { id: 'character_sheet',    label: 'Personaxes',        emoji: '📜', component: CharacterSheetWidget },
   { id: 'social_game_launcher', label: 'Xogo social',     emoji: '🐺', component: SocialGameLauncherWidget },
+  { id: 'wavelength_launcher',  label: 'Escala',          emoji: '🎯', component: WavelengthLauncherWidget },
   { id: 'first_player', label: 'Xogador inicial', emoji: '🎯', component: FirstPlayerWidget },
 ]
 
@@ -83,7 +85,7 @@ function TabbedView({ widgets, allWidgets, activeIds, onToggle, tall }) {
   const startX = useRef(null)
   const containerRef = useRef(null)
 
-  useEffect(() => { if (active >= widgets.length) setActive(0) }, [widgets.length])
+  useEffect(() => { if (active >= widgets.length) setActive(Math.max(0, widgets.length - 1)) }, [widgets.length])
 
   function onTouchStart(e) { startX.current = e.touches[0].clientX }
   function onTouchEnd(e) {
@@ -197,16 +199,18 @@ export default function ToolsPage() {
   const layoutMode = useLayoutMode()
   const [showSetup, setShowSetup] = useState(!session?.hasActiveSession)
   const [activeIds, setActiveIds] = useState(new Set(['dice', 'scoreboard']))
+  const [presetsLoaded, setPresetsLoaded] = useState(false)
   const [showSaveModal, setShowSaveModal] = useState(false)
   const [saveMsg, setSaveMsg] = useState('')
 
   const { presets, createPreset } = useToolPresets(session?.game?.id, user?.id)
 
   useEffect(() => {
-    if (presets.length > 0 && presets[0].config?.tools) {
+    if (!presetsLoaded && presets.length > 0 && presets[0].config?.tools) {
       setActiveIds(new Set(presets[0].config.tools))
+      setPresetsLoaded(true)
     }
-  }, [presets])
+  }, [presets, presetsLoaded])
 
   const allWidgets = ALL_WIDGETS.filter(w => isToolEnabled(w.id))
   const widgets = allWidgets.filter(w => activeIds.has(w.id))
@@ -217,6 +221,7 @@ export default function ToolsPage() {
 
   function endSession() {
     session?.clearSession()
+    setPresetsLoaded(false)
     setShowSetup(true)
   }
 
@@ -225,6 +230,9 @@ export default function ToolsPage() {
     setShowSaveModal(false)
     if (!error) {
       setSaveMsg(profile?.is_admin ? 'Preset gardado' : 'Preset enviado para aprobación')
+      setTimeout(() => setSaveMsg(''), 3000)
+    } else {
+      setSaveMsg('Erro ao gardar o preset')
       setTimeout(() => setSaveMsg(''), 3000)
     }
   }
